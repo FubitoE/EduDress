@@ -13,6 +13,7 @@ DIFFICULTY = (
 # 問題モデル
 class Question(models.Model):
     questions_id = models.AutoField(primary_key=True)
+    questions_number = models.IntegerField(default=0)
     questions_text = models.TextField()
     choice_a = models.TextField()
     choice_b = models.TextField()
