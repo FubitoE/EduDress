@@ -14,8 +14,9 @@
     <div class="container">
       <!-- ログイン中のユーザー名を表示 -->
       <button type="button" id="changeableButton" class="btn btn-light btn-lg" style="padding: 10px 50px;" onclick="openModal(this)">
-        {{ nickname }}
-      </button>
+        <span id="newNameDisplay">新しい名前</span><br>
+        <span id="currentName" style="font-size: 5px;">ユーザーネーム</span>
+      </button>      
     </div>
   
     <!-- モーダル -->
@@ -71,14 +72,17 @@
     bar.style.width = initialValue + '%'; // 幅を初期値に設定
 
     // ボタンのテキストを更新する関数
+    
     function updateButtonText() {
       const newButtonText = document.getElementById('newButtonText').value;
-      const button = document.getElementById('changeableButton');
-      button.textContent = newButtonText;
+      const newNameDisplay = document.getElementById('newNameDisplay');
+      newNameDisplay.textContent = newButtonText;
 
+      // モーダルを閉じる
       const modal = bootstrap.Modal.getInstance(document.getElementById('editButtonModal'));
       modal.hide();
     }
+
 
     // モーダルを開く関数
     function openModal(button) {

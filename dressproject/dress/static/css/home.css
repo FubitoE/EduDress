@@ -78,3 +78,7 @@ transition: background-color 0.3s;
 .menu-item:hover {
 background-color: #5c821a; /* ホバー時の色 */
 }
+
+#currentName{
+  font-size: 12px;
+}
