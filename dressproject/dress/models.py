@@ -9,6 +9,16 @@ DIFFICULTY = (
     ('AP', '応用')
 )
 
+class ExamYear(models.Model):
+    name = models.CharField(max_length=50, unique=True, verbose_name="試験年度名")
+    
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "試験年度"
+        verbose_name_plural = "試験年度"
+
 
 # 問題モデル
 class Question(models.Model):
@@ -20,7 +30,7 @@ class Question(models.Model):
     choice_c = models.TextField()
     choice_d = models.TextField()
     correct_answer = models.CharField(max_length=10, choices=[('a', 'ア'), ('b', 'イ'), ('c', 'ウ'), ('d', 'エ')], blank=True, default='a')
-    exam_year = models.CharField(max_length=20)
+    exam_year = models.ForeignKey(ExamYear, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="試験年度") 
     explanation = models.TextField()
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY)
 
@@ -32,8 +42,13 @@ class Questionimg(models.Model):
     question = models.ForeignKey(Question, related_name='images', on_delete=models.CASCADE)  # 外部キーを追加
     question_imgA = models.ImageField(upload_to='question_images/', blank=True, null=True)
     question_imgB = models.ImageField(upload_to='question_images/', blank=True, null=True)  # 画像がない場合に備えて
+    question_imgC = models.ImageField(upload_to='question_images/', blank=True, null=True) 
+    question_imgD = models.ImageField(upload_to='question_images/', blank=True, null=True) 
     explanation_imgA = models.ImageField(upload_to='explanation_images/', blank=True, null=True)
     explanation_imgB = models.ImageField(upload_to='explanation_images/', blank=True, null=True)  # 画像がない場合に備えて
+    explanation_imgC = models.ImageField(upload_to='explanation_images/', blank=True, null=True)
+    explanation_imgD = models.ImageField(upload_to='explanation_images/', blank=True, null=True)
+
 
     def __str__(self):
         return f"Images for question ID: {self.question.questions_id}"
