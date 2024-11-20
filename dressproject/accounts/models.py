@@ -63,6 +63,7 @@ class CustomUserManager(BaseUserManager):
             user_id = str(random.randint(100000, 999999))  # 再生成
         
         return user_id
+    
 
 
 # カスタムユーザー
