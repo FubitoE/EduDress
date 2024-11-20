@@ -58,8 +58,8 @@ align-items: center; /* 縦方向の中央揃え */
 display: flex;
 justify-content: center; /* メニューを中央に配置 */
 gap: 15px; /* ボタン間のスペース */
-padding: 10px 20px;
-margin-top: 10px; /* キャラクター画像との間隔を狭くする */
+padding: 10px 60px;
+margin-top: 0px; /* キャラクター画像との間隔を狭くする */
 background-color:white;
 border-radius: 15px; /* 丸みを設定 */
 }
