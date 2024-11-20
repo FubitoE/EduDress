@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from .services import process_learning_session
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
@@ -54,3 +56,12 @@ def signup_view(request):
             return redirect('accounts:signup')
     
     return render(request, 'accounts/signup.html')  # GETリクエスト時はサインアップフォームを表示
+
+@login_required
+def learning_session_view(request):
+    if request.method == "POST":
+        questions_solved = int(request.POST.get("questions_solved", 0))  # 解いた問題数を取得
+        process_learning_session(request.user, questions_solved)  # 学習セッションを処理
+        return redirect('home')  # 処理後にリダイレクト
+
+    return render(request, "dress/learning_session.html")

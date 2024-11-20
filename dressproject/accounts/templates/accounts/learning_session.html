@@ -1,0 +1,6 @@
+<form method="post" action="{% url 'learning_session' %}">
+    {% csrf_token %}
+    <label for="questions_solved">解いた問題数:</label>
+    <input type="number" name="questions_solved" id="questions_solved" min="0" required>
+    <button type="submit">学習セッションを完了</button>
+</form>
