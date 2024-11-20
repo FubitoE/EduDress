@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Question, Questionimg, Parts, Style
+from .models import Question, Questionimg, Parts, Style, ExamYear
+
+@admin.register(ExamYear)
+class ExamYearAdmin(admin.ModelAdmin):
+    list_display = ['name']
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
