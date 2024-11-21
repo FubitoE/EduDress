@@ -25,10 +25,14 @@ class Question(models.Model):
     questions_id = models.AutoField(primary_key=True)
     questions_number = models.IntegerField(default=0)
     questions_text = models.TextField()
-    choice_a = models.TextField()
-    choice_b = models.TextField()
-    choice_c = models.TextField()
-    choice_d = models.TextField()
+    choice_a_text = models.TextField(blank=True, null=True)  # テキスト用
+    choice_a_image = models.ImageField(upload_to='choices_images/', blank=True, null=True)  # 画像用
+    choice_b_text = models.TextField(blank=True, null=True)
+    choice_b_image = models.ImageField(upload_to='choices_images/', blank=True, null=True)
+    choice_c_text = models.TextField(blank=True, null=True)
+    choice_c_image = models.ImageField(upload_to='choices_images/', blank=True, null=True)
+    choice_d_text = models.TextField(blank=True, null=True)
+    choice_d_image = models.ImageField(upload_to='choices_images/', blank=True, null=True)
     correct_answer = models.CharField(max_length=10, choices=[('a', 'ア'), ('b', 'イ'), ('c', 'ウ'), ('d', 'エ')], blank=True, default='a')
     exam_year = models.ForeignKey(ExamYear, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="試験年度") 
     explanation = models.TextField()
