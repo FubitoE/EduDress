@@ -61,6 +61,7 @@ class Questionimg(models.Model):
 
 PARTS_CATEGORY = [
     ('hair', '髪'),
+    ('base', '素体'),
     ('eyes', '目'),
     ('clothes','服'),
     ('accessory', 'アクセサリー'),
