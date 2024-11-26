@@ -1,48 +1,58 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログインポップアップ</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="login.css">
+    <title>ログイン</title>
 </head>
 <body>
-    <div class="main-container">
-        <div class="title-box">
-            <h2>題名</h2>
+    <div class="highlight">
+        <!-- タイトル　-->
+        <div class="taitoru">
+            EduDress
         </div>
-        <!-- ログインボタンのIDをopenLoginBtnに変更 -->
-        <button id="openLoginBtn" class="login-button">ログイン</button>
-    </div>
 
-    <!-- ログインポップアップのコンテナ -->
-    <div id="popup" class="popup">
-        <div class="popup-content">
-            <h2>ログイン</h2>
-            <form method="post" action="{% url 'accounts:login' %}">
-                {% csrf_token %}
-                <label for="username">ニックネーム</label>
-                <input type="text" id="username" name="username">
-                
-                <label for="password">パスワード</label>
-                <input type="password" id="password" name="password">
-                
-                <button type="submit">ログインする</button>
-                <button type="button" onclick="window.location.href='{% url 'accounts:signup' %}'">新規登録</button>
-            </form>
-            {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                        <p class="{{ message.tags }}">{{ message }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-            <span class="close" onclick="closePopup()">&times;</span>
+        <!-- ログインボタン-->
+        <div class="loginbtn">
+            <button class="login-button" onclick="openPopup()">
+                ログイン
+            </button>
+        </div>
+
+        <!-- ログインウィンドウ-->
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <h2>ログイン</h2>
+                <form>
+                    <label for="id">ID</label>
+                    <input type="text" id="id" name="id">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password">
+                    <button type="submit">ログインする</button>
+                    <button type="button">新規登録</button>
+                </form>
+                <span class="close" onclick="closePopup()">&times;</span>
+            </div>
         </div>
     </div>
+    <script src="jsp/logintest.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function openPopup() {
+            document.getElementById("popup").style.display = "flex";
+        }
 
-    <script src="{% static 'javaScript/login.js' %}"></script>
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        } 
+    </script>
 </body>
 </html>
+
+
+
+ 
