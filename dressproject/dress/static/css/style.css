@@ -155,3 +155,7 @@ body {
     background-color: #aaa;
     color: white;
 }
+.denominator {
+    text-align: center;
+    border-top: 1px solid black; /* 分数線を表示 */
+}

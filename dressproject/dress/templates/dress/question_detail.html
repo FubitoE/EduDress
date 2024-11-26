@@ -1,4 +1,4 @@
-{% load static %}  <!-- ここでstaticをロード -->
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -11,31 +11,62 @@
 <body>
     <div class="container">
         <!-- 問題文の表示 -->
-        <h1 class="question-text">{{ question.questions_text }}</h1>
+        <h1 class="question-text">
+            <pre>
+            {{ question.questions_text|linebreaks }}
+            </pre>
+        </h1>
 
         <!-- 選択肢の表示 -->
-        <form method="POST">
+        <form method="POST" class="choices-form">
             {% csrf_token %}
             <div class="choices">
-                <label>
-                    <input type="radio" name="choice" value="a" {% if selected_choice == 'a' %}checked{% endif %}> A. {{ question.choice_a }}
+                <label for="choice_a">
+                    <input type="radio" id="choice_a" name="choice" value="a" {% if selected_choice == 'a' %}checked{% endif %}>
+                    <span>
+                        {{ question.choice_a_text }}
+                        {% if question.choice_a_image %}
+                            <img src="{{ question.choice_a_image.url }}" alt="選択肢Aの画像">
+                        {% endif %}
+                    </span>
                 </label>
                 <br>
-                <label>
-                    <input type="radio" name="choice" value="b" {% if selected_choice == 'b' %}checked{% endif %}> B. {{ question.choice_b }}
+
+                <label for="choice_b">
+                    <input type="radio" id="choice_b" name="choice" value="b" {% if selected_choice == 'b' %}checked{% endif %}>
+                    <span>
+                        {{ question.choice_b_text }}
+                        {% if question.choice_b_image %}
+                            <img src="{{ question.choice_b_image.url }}" alt="選択肢Bの画像">
+                        {% endif %}
+                    </span>
                 </label>
                 <br>
-                <label>
-                    <input type="radio" name="choice" value="c" {% if selected_choice == 'c' %}checked{% endif %}> C. {{ question.choice_c }}
+
+                <label for="choice_c">
+                    <input type="radio" id="choice_c" name="choice" value="c" {% if selected_choice == 'c' %}checked{% endif %}>
+                    <span>
+                        {{ question.choice_c_text }}
+                        {% if question.choice_c_image %}
+                            <img src="{{ question.choice_c_image.url }}" alt="選択肢Cの画像">
+                        {% endif %}
+                    </span>
                 </label>
                 <br>
-                <label>
-                    <input type="radio" name="choice" value="d" {% if selected_choice == 'd' %}checked{% endif %}> D. {{ question.choice_d }}
+
+                <label for="choice_d">
+                    <input type="radio" id="choice_d" name="choice" value="d" {% if selected_choice == 'd' %}checked{% endif %}>
+                    <span>
+                        {{ question.choice_d_text }}
+                        {% if question.choice_d_image %}
+                            <img src="{{ question.choice_d_image.url }}" alt="選択肢Dの画像">
+                        {% endif %}
+                    </span>
                 </label>
             </div>
 
             <!-- 解説表示用のボタン -->
-            <button type="submit">回答する</button>
+            <button type="submit" class="submit-button">回答する</button>
         </form>
 
         <!-- 回答後に解説と結果を表示 -->
@@ -44,11 +75,11 @@
                 {% if correct %}
                     <p class="correct">正解です！</p>
                 {% else %}
-                    <p class="incorrect">不正解です！！！！！！！！</p>
+                    <p class="incorrect">不正解です！</p>
                 {% endif %}
-                
+
                 <h3>解説:</h3>
-                <p>{{ question.explanation }}</p>
+                <p class="explanation">{{ question.explanation|linebreaks }}</p>
             </div>
         {% endif %}
     </div>
