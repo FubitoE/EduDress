@@ -1,10 +1,9 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>EduDress ログイン</title>
     <!-- BootstrapのCDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -14,10 +13,20 @@
 <body class="highlight">
     <div class="container">
         <!-- タイトル -->
+=======
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="login.css">
+    <title>ログイン</title>
+</head>
+<body>
+    <div class="highlight">
+        <!-- タイトル　-->
+>>>>>>> 265694bd4016fd407ea6acbef4657a6e8a658ca1
         <div class="taitoru">
             EduDress
         </div>
 
+<<<<<<< HEAD
         <!-- ログインボタン -->
         <div class="loginbtn">
             <button id="openLoginBtn" class="login-button" onclick="openPopup()">ログイン</button>
@@ -48,10 +57,41 @@
                         {% endfor %}
                     </div>
                 {% endif %}
+=======
+        <!-- ログインボタン-->
+        <div class="loginbtn">
+            <button class="login-button" onclick="openPopup()">
+                ログイン
+            </button>
+        </div>
+
+        <!-- ログインウィンドウ-->
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <h2>ログイン</h2>
+                <form>
+                    <label for="id">ID</label>
+                    <input type="text" id="id" name="id">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password">
+                    <button type="submit">ログインする</button>
+                    <button type="button">新規登録</button>
+                </form>
+                <span class="close" onclick="closePopup()">&times;</span>
+>>>>>>> 265694bd4016fd407ea6acbef4657a6e8a658ca1
             </div>
         </div>
     </div>
+    <script src="jsp/logintest.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function openPopup() {
+            document.getElementById("popup").style.display = "flex";
+        }
 
+<<<<<<< HEAD
     <!-- JavaScriptファイル -->
     <script src="{% static 'js/login.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -65,6 +105,15 @@
         function closePopup() {
             document.getElementById("popup").style.display = "none";
         }
+=======
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        } 
+>>>>>>> 265694bd4016fd407ea6acbef4657a6e8a658ca1
     </script>
 </body>
 </html>
+
+
+
+ 

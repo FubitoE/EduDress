@@ -6,6 +6,7 @@ body {
 }
 
 .highlight {
+<<<<<<< HEAD
     background-image: url('../images/haikei.png'); /* CSSから見た相対パス */
     background-repeat: no-repeat;
     background-position: center;
@@ -15,6 +16,16 @@ body {
 }
 
 .taitoru {
+=======
+        background-image: url('haikei.png'); /* ハイライトの色 */
+        position: relative; /* 子要素の絶対配置を可能にする */
+        padding: 20px; /* パディングを追加 */
+        width: 650px; /* ビューポートの幅全体 */
+        height: 100vh; /* ビューポートの高さ全体 */
+    }
+
+.taitoru{
+>>>>>>> 265694bd4016fd407ea6acbef4657a6e8a658ca1
     font-family: "Georgia", serif;
     font-size: 80px; /* フォントサイズ */
     font-style: italic; /* イタリック体 */
@@ -81,6 +92,7 @@ body {
     right: 10px;
     font-size: 20px;
     cursor: pointer;
+<<<<<<< HEAD
 }
 
 .login-button {
@@ -96,6 +108,23 @@ body {
 }
 
 .loginbtn {
+=======
+} 
+
+.login-button{
+    display: inline-block;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  background: #B39570;
+  color: #FFF;
+  border-radius: 4px;
+  box-shadow: 0px 0px 0px 5px #B39570;
+  border: dashed 1px #FFF;
+  width: 200px;
+}
+
+.loginbtn{
+>>>>>>> 265694bd4016fd407ea6acbef4657a6e8a658ca1
     text-align: center; /* テキストの中央揃え */
     margin-top: 300px;
 }
