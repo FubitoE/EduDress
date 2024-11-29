@@ -1,0 +1,6 @@
+@media (max-width: 768px) {
+    .result {
+        width: 90%;
+        padding: 15px;
+    }
+}

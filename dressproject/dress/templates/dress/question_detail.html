@@ -5,17 +5,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>問題出題画面</title>
+    <title>{{ question.questions_text|truncatechars:30 }}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <div class="container">
-        <!-- 問題文の表示 -->
-        <h1 class="question-text">
-            <pre>
-            {{ question.questions_text|linebreaks }}
-            </pre>
-        </h1>
+        <!-- 問題文の表示 (最上部) -->
+        <h1 class="question-title">問題: {{ question.questions_number }}</h1>
+
+        <!-- 上部画像 (A) -->
+        {% if question.images.all %}
+            {% for image in question.images.all %}
+                {% if image.question_imgA %}
+                    <div class="question-image-top">
+                        <img src="{{ image.question_imgA.url }}" alt="問題画像 (上部)">
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <!-- 問題文のテキスト -->
+        {% if question.questions_text %}
+            <div class="question-text">
+                <p>{{ question.questions_text|linebreaks }}</p>
+            </div>
+        {% endif %}
+
+        <!-- 中間画像 (B) -->
+        {% if question.images.all %}
+            {% for image in question.images.all %}
+                {% if image.question_imgB %}
+                    <div class="question-image-middle">
+                        <img src="{{ image.question_imgB.url }}" alt="問題画像 (間)">
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <!-- 問題パーツのテキストと画像 -->
+        <div class="question-content">
+            {% for part in question.parts.all %}
+                {% if part.text %}
+                    <p>{{ part.text|linebreaks }}</p>
+                {% endif %}
+                {% if part.image %}
+                    <img src="{{ part.image.url }}" alt="問題パーツ画像">
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- 下部画像 (C, D) -->
+        {% if question.images.all %}
+            {% for image in question.images.all %}
+                {% if image.question_imgC or image.question_imgD %}
+                    <div class="question-image-bottom">
+                        {% if image.question_imgC %}
+                            <img src="{{ image.question_imgC.url }}" alt="問題画像 (下部C)">
+                        {% endif %}
+                        {% if image.question_imgD %}
+                            <img src="{{ image.question_imgD.url }}" alt="問題画像 (下部D)">
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
 
         <!-- 選択肢の表示 -->
         <form method="POST" class="choices-form">
@@ -24,6 +77,7 @@
                 <label for="choice_a">
                     <input type="radio" id="choice_a" name="choice" value="a" {% if selected_choice == 'a' %}checked{% endif %}>
                     <span>
+                        <strong>ア</strong>
                         {{ question.choice_a_text }}
                         {% if question.choice_a_image %}
                             <img src="{{ question.choice_a_image.url }}" alt="選択肢Aの画像">
@@ -35,6 +89,7 @@
                 <label for="choice_b">
                     <input type="radio" id="choice_b" name="choice" value="b" {% if selected_choice == 'b' %}checked{% endif %}>
                     <span>
+                        <strong>イ</strong>
                         {{ question.choice_b_text }}
                         {% if question.choice_b_image %}
                             <img src="{{ question.choice_b_image.url }}" alt="選択肢Bの画像">
@@ -46,6 +101,7 @@
                 <label for="choice_c">
                     <input type="radio" id="choice_c" name="choice" value="c" {% if selected_choice == 'c' %}checked{% endif %}>
                     <span>
+                        <strong>ウ</strong>
                         {{ question.choice_c_text }}
                         {% if question.choice_c_image %}
                             <img src="{{ question.choice_c_image.url }}" alt="選択肢Cの画像">
@@ -57,6 +113,7 @@
                 <label for="choice_d">
                     <input type="radio" id="choice_d" name="choice" value="d" {% if selected_choice == 'd' %}checked{% endif %}>
                     <span>
+                        <strong>エ</strong>
                         {{ question.choice_d_text }}
                         {% if question.choice_d_image %}
                             <img src="{{ question.choice_d_image.url }}" alt="選択肢Dの画像">
