@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Question, Questionimg, Parts, Style, ExamYear, QuestionPart
 
+
 @admin.register(ExamYear)
 class ExamYearAdmin(admin.ModelAdmin):
     list_display = ['name']
@@ -16,8 +17,8 @@ class QuestionPartInline(admin.TabularInline):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('questions_id', 'questions_text', 'difficulty', 'exam_year')
-    search_fields = ('questions_text', 'questions_id')
+    list_display = ('questions_id','questions_number', 'questions_text', 'difficulty', 'exam_year')
+    search_fields = ('questions_text', 'questions_id', 'exam_year__name')  # exam_year__name に修正
     inlines = [QuestionPartInline]  # QuestionPart をインラインで表示
 
     def get_readonly_fields(self, request, obj=None):

@@ -126,20 +126,19 @@
             <button type="submit" class="submit-button">回答する</button>
         </form>
 
-        <!-- 解説表示部分 -->
-        <div class="result" style="display: none;">
-            <button class="close-result">解説を閉じる</button>
-            {% if selected_choice %}
+        <!-- 回答後に解説と結果を表示 -->
+        {% if selected_choice %}
+            <div class="result">
                 {% if correct %}
-                    <p class="correct">正解です！</p>
+                    <p class="correct-message">正解です！</p>
                 {% else %}
-                    <p class="incorrect">不正解です！</p>
+                    <p class="incorrect-message">不正解です！</p>
                 {% endif %}
 
                 <h3>解説:</h3>
                 <p class="explanation">{{ question.explanation|linebreaks }}</p>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </div>
 
     <script src="{% static 'js/quiz.js' %}"></script>
