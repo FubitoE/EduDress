@@ -1,0 +1,136 @@
+/* 全体のスタイル */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.highlight {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* ページタイトル */
+.nendo h1 {
+    font-size: 28px;
+    color: #007bff;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #007bff;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* 戻るボタン */
+.back {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.btn-back {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-back:hover {
+    background-color: #ddd;
+}
+
+/* 問題リスト */
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-custom {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.2s;
+    text-align: center;
+    min-width: 120px;
+}
+
+.btn-custom:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* 問題がない場合のメッセージ */
+.empty-message {
+    margin-top: 50px;
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+}
+
+.empty-message p {
+    margin-bottom: 20px;
+}
+
+.empty-message .btn-back {
+    margin-top: 10px;
+}
+
+/* カード形式にしたい場合（オプション） */
+.questions-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.question-card {
+    width: 250px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.question-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.question-card p {
+    font-size: 14px;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .button-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-custom {
+        width: 100%;
+        max-width: 300px;
+    }
+}

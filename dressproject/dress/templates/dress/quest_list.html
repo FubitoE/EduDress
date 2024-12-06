@@ -1,20 +1,41 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>問題一覧</title>
+    <link rel="stylesheet" href="{% static 'css/question_list.css' %}">
+    <title>{{ year }}の問題一覧</title>
 </head>
 <body>
-    <div class="container">
-        <h1>問題一覧表</h1>
-        <ul>
-            {% for question in questions %}
-                <li>
-                    <a href="{% url 'question_detail' question.pk %}">問題ID: {{ question.questions_id }}</a>
-                </li>
-            {% endfor %}
-        </ul>
+    <div class="highlight">
+        <!-- 戻るボタン -->
+        <div class="back">
+            <a href="{% url 'exam_year_list' %}" class="btn btn-back">年度一覧に戻る</a>
+        </div>
+
+        <!-- 年度ラベル -->
+        <div class="nendo">
+            <h1>{{ year }}の問題</h1>
+        </div>
+
+        <!-- 問題リスト -->
+        <div class="button-container">
+            {% if questions %}
+                {% for question in questions %}
+                    <!-- 昇順に取得された questions を表示 -->
+                    <a href="{% url 'question_detail' question.questions_id %}" class="btn btn-custom">
+                        問題 {{ question.questions_number }}
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div class="empty-message">
+                    <p>この年度の問題はまだ登録されていません。</p>
+                    <a href="{% url 'exam_year_list' %}" class="btn btn-back">他の年度を選択する</a>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>

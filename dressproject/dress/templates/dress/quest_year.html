@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/quest_year.css' %}">
+    <title>出題年度一覧</title>
+</head>
+<body>
+    <div class="highlight">
+        <!-- 戻るボタン -->
+        <div class="back">
+            <a href="{% url 'home' %}" class="botan">
+                <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" width="40" height="40" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- ページタイトル -->
+        <div class="nendo">
+            <h1>出題年度一覧</h1>
+        </div>
+
+        <!-- 年度リスト -->
+        <div class="year-container">
+            {% if exam_years %}
+                {% for exam_year in exam_years %}
+                    <a href="{% url 'questions_by_year' exam_year.name %}" class="btn btn-custom">
+                        {{ exam_year.name }}年度
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p>登録されている出題年度がありません。</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

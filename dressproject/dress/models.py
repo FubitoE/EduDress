@@ -117,3 +117,5 @@ class Parts(models.Model):
         verbose_name = "パーツ"
         verbose_name_plural = "パーツ"
         ordering = ['parts_category', 'parts_name']
+
+

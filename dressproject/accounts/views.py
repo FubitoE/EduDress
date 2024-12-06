@@ -2,8 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from .services import process_learning_session
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+import json
+from .services import process_learning_session
+from .models import UserProgress
 
 User = get_user_model()
 
@@ -12,26 +15,22 @@ def index_view(request):
 
 def login_view(request):
     if request.method == "POST":
-        # フォームからニックネームとパスワードを取得
         username = request.POST["username"]
         password = request.POST["password"]
 
-        # ユーザーを認証
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            # 認証成功
             login(request, user)
-            return redirect('home')  # ログイン後、questionsページにリダイレクト
+            return redirect('home')
         else:
-            # 認証失敗
             messages.error(request, "ニックネームまたはパスワードが間違っています")
     
-    return render(request, "dress/index.html")  # ログインフォームを含むテンプレートを表示
+    return render(request, "dress/index.html")
 
 def logout_view(request):
     logout(request)
-    return redirect("/")  # ログアウト後にトップページに戻る
+    return redirect("/")
 
 def signup_view(request):
     if request.method == "POST":
@@ -41,27 +40,54 @@ def signup_view(request):
         
         if password != password_confirm:
             messages.error(request, "パスワードが一致しません")
-            return redirect('accounts:signup')  # パスワードが一致しない場合は再度signup画面に戻る
-        
-        # ユーザーを作成
+            return redirect('accounts:signup')
+
         try:
-            user = User.objects.create_user(username=nickname, password=password)
+            user = User.objects.create_user(nickname=nickname, password=password)
             user.save()
-            
-            # 自動ログイン処理
             login(request, user)
-            return redirect('question_list')  # 登録後、質問一覧ページに遷移
+            return redirect('home')
         except Exception as e:
             messages.error(request, f"ユーザー作成エラー: {e}")
             return redirect('accounts:signup')
     
-    return render(request, 'accounts/signup.html')  # GETリクエスト時はサインアップフォームを表示
+    return render(request, 'accounts/signup.html')
 
 @login_required
 def learning_session_view(request):
     if request.method == "POST":
-        questions_solved = int(request.POST.get("questions_solved", 0))  # 解いた問題数を取得
-        process_learning_session(request.user, questions_solved)  # 学習セッションを処理
-        return redirect('home')  # 処理後にリダイレクト
+        questions_solved = int(request.POST.get("questions_solved", 0))
+        process_learning_session(request.user, questions_solved)
+        return redirect('home')
 
     return render(request, "dress/learning_session.html")
+
+@login_required
+def home(request):
+    user = request.user
+    progress = UserProgress.objects.get(user=user)
+    progress_percentage = (progress.current_experience / progress.experience_to_next_rank) * 100
+    return render(request, 'home.html', {
+        'progress': progress,
+        'progress_percentage': progress_percentage,
+    })
+
+@login_required
+def update_user_info(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        new_nickname = data.get("nickname")
+        new_username = data.get("username")
+
+        # ユーザー名の重複チェック
+        if new_username and User.objects.filter(username=new_username).exclude(pk=request.user.pk).exists():
+            return JsonResponse({"success": False, "message": "このユーザー名は既に使用されています。"})
+
+        user = request.user
+        if new_nickname:
+            user.nickname = new_nickname
+        if new_username:
+            user.username = new_username
+        user.save()
+
+        return JsonResponse({"success": True, "message": "情報が正常に更新されました。"})

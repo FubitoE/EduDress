@@ -1,84 +1,139 @@
-body {
-  height: 100vh; /* ビューポートの高さを100%に設定 */
-  max-width: 650px; /* 横幅を40%に設定 */
-  margin: auto; /* セクションを中央に配置 */
-  overflow-y: scroll; /* 縦スクロールを有効に */
-}
-
-.highlight {
-  background-color: #e3cdba; /* ハイライトの色 */
-  position: relative; /* 子要素の絶対配置を可能にする */
-  padding: 20px; /* パディングを追加 */
-  width: 650px; /* ビューポートの幅全体 */
-  height: 100vh; /* ビューポートの高さ全体 */
-}
-.character {
+/* 全体設定: ディスプレイサイズに固定 */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Georgia', serif;
+  background-color: #f8f9fa;
+  width: 100vw; /* ビューポートの幅に固定 */
+  height: 100vh; /* ビューポートの高さに固定 */
+  overflow: hidden; /* スクロールを防止 */
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 800px;
+}
+
+.highlight {
+  background-color: #e3cdba;
+  position: relative;
+  padding: 20px;
+  width: 100vw; /* ビューポートの幅に固定 */
+  height: 100vh; /* ビューポートの高さに固定 */
+}
+
+/* ユーザー情報 (左上に固定) */
+.user-info {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.user-info span {
+  display: block;
+}
+
+/* ランクと経験値 (右上に固定) */
+.stats {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.stats span {
+  font-weight: bold;
+}
+
+/* アバター表示 */
+.character {
+  height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .character img {
-  width: 60%; /* アバターの幅 */
+  width: 60%;
 }
 
-.label-bar-container {
-position: absolute; /* 右上に固定配置 */
-top: 20px; /* 上から20pxの位置に配置 */
-right: 20px; /* 右から20pxの位置に配置 */
-display: flex; /* 横並びに配置 */
-align-items: center; /* 縦方向の中央揃え */
-gap: 10px; /* ラベルとバーの間のスペース */
+/* 丸いボタンのデザイン */
+.circle-button {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 40px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  font-size: 24px;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 
-.bar-container {
-width: 150px; /* バーの最大幅 */
-background-color: #ddd;
-border-radius: 5px;
-overflow: hidden;
+/* 学習ボタン */
+.learn-button {
+  background-color: #4CAF50;
+  right: 40px;
 }
 
-.bar {
-height: 30px;
-background-color: #4caf50; /* プログレスバーの色 */
-width: 75%; /* 初期幅（例：75%） */
-transition: width 0.5s; /* 幅の変化にアニメーション */
+/* 着せ替えボタン */
+.customize-button {
+  background-color: #2196F3;
+  right: 220px;
 }
 
-.sikaku{
-position: absolute; /* 右上に固定配置 */
-top: 60px; /* 上から20pxの位置に配置 */
-right: 80px; /* 右から20pxの位置に配置 */
-display: flex; /* 横並びに配置 */
-align-items: center; /* 縦方向の中央揃え */
+/* ボタンホバー効果 */
+.circle-button:hover {
+  filter: brightness(0.9);
+}
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
-.menu-bar {
-display: flex;
-justify-content: center; /* メニューを中央に配置 */
-gap: 15px; /* ボタン間のスペース */
-padding: 10px 60px;
-margin-top: 0px; /* キャラクター画像との間隔を狭くする */
-background-color:white;
-border-radius: 15px; /* 丸みを設定 */
+.hidden {
+  display: none;
 }
 
-.menu-item {
-color: white;
-background-color: #c6d166;
-text-decoration: none; /* リンクの下線を消す */
-padding: 10px 15px;
-border-radius: 10px;
-cursor: pointer;
-transition: background-color 0.3s;
+.popup form {
+  display: flex;
+  flex-direction: column;
 }
 
-
-.menu-item:hover {
-background-color: #5c821a; /* ホバー時の色 */
+.popup label {
+  margin-bottom: 10px;
 }
 
-#currentName{
-  font-size: 12px;
+.popup input {
+  margin-bottom: 15px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.popup button {
+  margin-right: 10px;
 }
