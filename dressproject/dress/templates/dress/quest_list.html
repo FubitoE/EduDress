@@ -24,10 +24,12 @@
         <div class="button-container">
             {% if questions %}
                 {% for question in questions %}
-                    <!-- 昇順に取得された questions を表示 -->
-                    <a href="{% url 'question_detail' question.questions_id %}" class="btn btn-custom">
-                        問題 {{ question.questions_number }}
-                    </a>
+                    {% if question.difficulty == user.difficulty %}
+                        <!-- ユーザーが選択した難易度に一致する questions を表示 -->
+                        <a href="{% url 'question_detail' question.questions_id %}" class="btn btn-custom">
+                            問題 {{ question.questions_number }}
+                        </a>
+                    {% endif %}
                 {% endfor %}
             {% else %}
                 <div class="empty-message">

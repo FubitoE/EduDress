@@ -1,7 +1,67 @@
-from django.views.generic import ListView, DetailView
 from django.shortcuts import render
+from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from .models import Question, ExamYear
+import json
+import random  # randomをインポート
+
+# 難易度を更新するAPIエンドポイント
+@login_required
+@csrf_exempt  # 必要に応じて追加（APIエンドポイント用）
+def update_difficulty(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)  # JSONデータを解析
+            difficulty = data.get("difficulty")
+            valid_choices = ['IP', 'SG', 'FE', 'AP']
+
+            if difficulty not in valid_choices:
+                return JsonResponse({"success": False, "message": "無効な難易度が選択されました。"})
+
+            # ログイン中のユーザーに難易度を保存
+            user = request.user
+            user.difficulty = difficulty
+            user.save()
+
+            return JsonResponse({"success": True, "message": "難易度が保存されました！"})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"エラーが発生しました: {str(e)}"})
+    return JsonResponse({"success": False, "message": "無効なリクエストです。"})
+
+@login_required
+def study_view(request):
+    """ランダム問題学習画面"""
+    return render(request, 'dress/study.html')  # study.htmlを返す
+
+# 難易度に基づいてランダムな問題を取得するAPIエンドポイント
+@login_required
+def question_list_by_difficulty(request):
+    user = request.user
+    difficulty = user.difficulty  # ユーザーが設定した難易度
+    questions = Question.objects.filter(difficulty=difficulty)
+
+    if not questions:
+        return JsonResponse({"error": "この難易度には問題がありません。"}, status=404)
+
+    # ランダムに問題を選択
+    question = random.choice(questions)
+
+    # 問題の選択肢を含むデータを返す
+    data = {
+        "questions_number": question.questions_number,
+        "questions_text": question.questions_text,
+        "choices": {
+            "a": question.choice_a_text,
+            "b": question.choice_b_text,
+            "c": question.choice_c_text,
+            "d": question.choice_d_text,
+        },
+        "question_id": question.id,
+    }
+
+    return JsonResponse(data)
 
 # トップページビュー
 def index_view(request):
@@ -36,7 +96,7 @@ class ListQuestionsView(ListView):
         context['year'] = exam_year_name  # 年度名をテンプレートに渡す
         return context
 
-
+# 問題詳細ビュー
 class QuestionDetailView(DetailView):
     template_name = 'dress/question_detail.html'
     model = Question
@@ -60,3 +120,19 @@ class QuestionDetailView(DetailView):
 # ホームページビュー
 def home_view(request):
     return render(request, "dress/home.html", {"user": request.user})
+
+# 学習関連ビュー
+def learn_view(request):
+    return render(request, 'dress/learn.html')  # 中間学習画面
+
+def study_view(request):
+    return render(request, 'dress/study.html')  # ランダム問題学習画面
+
+def review_view(request):
+    return render(request, 'dress/review.html')  # 復習画面
+
+def all_questions_view(request):
+    return render(request, 'dress/all_questions.html')  # 問題一覧画面
+
+def select_difficulty_view(request):
+    return render(request, 'dress/select_difficulty.html')  # 難易度選択画面

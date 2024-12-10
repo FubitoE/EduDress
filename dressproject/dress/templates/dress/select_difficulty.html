@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>難易度を選択</title>
+</head>
+<body>
+    <h1>難易度を選択してください</h1>
+    <form id="difficulty-form">
+        {% csrf_token %}
+        <label for="difficulty">難易度:</label>
+        <select id="difficulty" name="difficulty">
+            <option value="IP">Iパス</option>
+            <option value="SG">セキュマネ</option>
+            <option value="FE">基本</option>
+            <option value="AP">応用</option>
+        </select>
+        <button type="submit">保存</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('difficulty-form').addEventListener('submit', function(event) {
+            event.preventDefault();  // フォームの通常送信を防ぐ
+
+            const difficulty = document.getElementById('difficulty').value;  // 選択した難易度を取得
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;  // CSRFトークン取得
+
+            fetch("{% url 'update_difficulty' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify({ difficulty })  // データをJSONとして送信
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                if (data.success) {
+                    messageDiv.style.color = "green";
+                    messageDiv.innerText = data.message;
+                    setTimeout(() => {
+                      window.location.href = "{% url 'learn' %}";  // 'learn' に対応するURLに遷移
+                    }, 1000);
+                } else {
+                    messageDiv.style.color = "red";
+                    messageDiv.innerText = data.message;
+                }
+            })
+            .catch(error => {
+                console.error("エラー:", error);
+                document.getElementById('message').innerText = "エラーが発生しました。";
+            });
+        });
+    </script>
+</body>
+</html>
