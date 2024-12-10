@@ -1,37 +1,55 @@
-/* 全体設定: ディスプレイサイズに固定 */
 html, body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  background-color: #f8f9fa;
-  width: 100vw; /* ビューポートの幅に固定 */
-  height: 100vh; /* ビューポートの高さに固定 */
-  overflow: hidden; /* スクロールを防止 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-image: url('/media/room/room6.jpg'); /* 画像のパス */
+  background-size: cover; /* 背景画像が画面全体を覆うようにする */
+  background-position: center center; /* 画像を中央に配置 */
+  background-attachment: fixed; /* スクロールしても背景が動かないようにする */
+  width: 100vw; /* ビューポートの幅に合わせる */
+  height: 100vh; /* ビューポートの高さに合わせる */
 }
 
-.highlight {
-  background-color: #e3cdba;
-  position: relative;
-  padding: 20px;
-  width: 100vw; /* ビューポートの幅に固定 */
-  height: 100vh; /* ビューポートの高さに固定 */
+body::before {
+  content: ""; /* 擬似要素の作成 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.); /* 背景色に透明度を追加 */
+  pointer-events: none; /* このレイヤーはクリックイベントを無視 */
 }
+
 
 /* ユーザー情報 (左上に固定) */
 .user-info {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 30px;
+  left: 100px;
   background-color: white;
-  padding: 10px 20px;
+  padding: 15px 25px;
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-size: 1.2rem;
-  line-height: 1.5;
+  font-size: 25px;
+  line-height: 1.4;
   color: #333;
+  width: 400px;
+  height: auto;
+  font-weight: 400 !important; /* 文字の太さを統一 */
+
+  /* デザイン */
+  position: relative;
+  display: inline-block;
+  font-weight: bold;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  color: #668ad8;
+  text-shadow: 0 0 5px white;
+  padding: 0.5em 1em;
+  background: repeating-linear-gradient(-45deg, #cce7ff, #cce7ff 3px,#e9f4ff 3px, #e9f4ff 7px);
+  transition: .4s;
 }
 
 .user-info span {
@@ -40,16 +58,32 @@ html, body {
 
 /* ランクと経験値 (右上に固定) */
 .stats {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 30px;
+  left:  1300px; /* 右寄せから左寄せに変更 */
   background-color: white;
-  padding: 10px 20px;
+  padding: 15px 25px;
   border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-size: 1.2rem;
-  line-height: 1.5;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  font-size: 25px;
+  line-height: 1.4;
   color: #333;
+  width: 300px;
+  height: auto;
+  display: flex;
+  
+  /* デザイン */
+  position: relative;
+  display: inline-block;
+  font-weight: bold;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  color: #668ad8;
+  text-shadow: 0 0 5px white;
+  padding: 0.5em 1em;
+  background: repeating-linear-gradient(-45deg, #cce7ff, #cce7ff 3px,#e9f4ff 3px, #e9f4ff 7px);
+  transition: .4s;
 }
 
 .stats span {
@@ -58,49 +92,95 @@ html, body {
 
 /* アバター表示 */
 .character {
-  height: calc(100vh - 70px);
+  position: fixed; /* 固定配置 */
+  top: 50%; /* 上から50% */
+  left: 50%; /* 左から50% */
+  transform: translate(-50%, -50%); /* 完全に中央に揃える */
   display: flex;
   justify-content: center;
   align-items: center;
+  width: auto; /* 必要に応じて幅を自動調整 */
+  height: auto; /* 必要に応じて高さを自動調整 */
 }
 
 .character img {
-  width: 60%;
+  max-width: 60%; /* 画像の最大幅を指定 */
+  max-height: 80%; /* 画像の最大高さを指定 */
+  object-fit: contain; /* 画像が縦横比を保つ */
 }
 
-/* 丸いボタンのデザイン */
-.circle-button {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
+/* 学習ボタン */
+.learn-button {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  width: 230px;
+  height: 130px;
+  justify-content: center;
+  align-items: center;
+  bottom: 40px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  font-size: 35px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  position: fixed; /* 固定配置 */
   display: flex;
+  right: 100px; /* 右端から40px */
+  bottom: 40px; /* 下端から40px */
+  text-decoration: none;
+  background: #87befd;
+  color: #FFF;
+  width: 180px;
+  height: 180px;
+  line-height: 120px;
+  border-radius: 50%;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0px 0px 0px 5px #87befd;
+  border: dashed 1px #FFF;
+  transition: .4s;
+}
+
+.learn-button:hover{
+  background: #668ad8;
+  box-shadow: 0px 0px 0px 5px #668ad8;
+}
+
+/* 着せ替えボタン */
+.customize-button {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
   justify-content: center;
   align-items: center;
   position: fixed;
   bottom: 40px;
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-  font-size: 24px;
+  font-size: 35px;
   color: white;
   border: none;
   cursor: pointer;
-}
-
-/* 学習ボタン */
-.learn-button {
-  background-color: #4CAF50;
-  right: 40px;
-}
-
-/* 着せ替えボタン */
-.customize-button {
-  background-color: #2196F3;
-  right: 220px;
+  position: fixed; /* 固定配置 */
+  bottom: 40px; /* 学習ボタンと同じ高さに固定 */
+  right: 340px; /* 学習ボタンの左に配置するため、右端から230px */
+  display: flex;
+  text-decoration: none;
+  background: #87befd;
+  color: #FFF;
+  width: 180px;
+  height: 180px;
+  line-height: 120px;
+  border-radius: 50%;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0px 0px 0px 5px #87befd;
+  border: dashed 1px #FFF;
+  transition: .4s;
 }
 
 /* ボタンホバー効果 */
-.circle-button:hover {
-  filter: brightness(0.9);
+.customize-button:hover {
+  background: #668ad8;
+  box-shadow: 0px 0px 0px 5px #668ad8;
 }
+
 .popup {
   position: fixed;
   top: 50%;

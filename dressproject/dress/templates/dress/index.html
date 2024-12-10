@@ -25,7 +25,7 @@
             <h2>ログイン</h2>
             <form method="post" action="{% url 'accounts:login' %}">
                 {% csrf_token %}
-                <label for="username">ニックネーム</label>
+                <label for="username">ユーザー名</label>
                 <input type="text" id="username" name="username" required>
                 
                 <label for="password">パスワード</label>
