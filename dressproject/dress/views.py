@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -30,11 +30,6 @@ def update_difficulty(request):
             return JsonResponse({"success": False, "message": f"エラーが発生しました: {str(e)}"})
     return JsonResponse({"success": False, "message": "無効なリクエストです。"})
 
-@login_required
-def study_view(request):
-    """ランダム問題学習画面"""
-    return render(request, 'dress/study.html')  # study.htmlを返す
-
 # 難易度に基づいてランダムな問題を取得するAPIエンドポイント
 @login_required
 def question_list_by_difficulty(request):
@@ -62,6 +57,51 @@ def question_list_by_difficulty(request):
     }
 
     return JsonResponse(data)
+
+@login_required
+def question_view(request, pk=None):
+    """
+    - pk が指定されている場合: 特定の問題を取得
+    - pk が指定されていない場合: ランダムな問題を取得 (learn/study)
+    """
+    if pk:
+        # 特定の問題を取得
+        question = get_object_or_404(Question, pk=pk)
+    else:
+        # ランダムな問題を取得: ユーザーの選択した難易度に基づく
+        user = request.user
+        difficulty = getattr(user, "difficulty", None)  # ユーザーが選択した難易度を取得
+
+        if not difficulty:
+            return render(request, "dress/question_detail.html", {"error": "難易度が選択されていません。"})
+
+        # 指定された難易度の問題を取得
+        questions = Question.objects.filter(difficulty=difficulty)
+
+        if not questions.exists():
+            return render(request, "dress/question_detail.html", {"error": f"{difficulty}の問題が見つかりません。"})
+
+        # ランダムに問題を選択
+        question = random.choice(questions)
+
+    # POSTリクエストで回答処理
+    if request.method == "POST":
+        selected_choice = request.POST.get("choice")
+        if not selected_choice or selected_choice not in ["a", "b", "c", "d"]:
+            return render(request, "dress/question_detail.html", {
+                "question": question,
+                "error": "無効な選択肢です。",
+            })
+
+        correct = selected_choice == question.correct_answer
+        return render(request, "dress/question_detail.html", {
+            "question": question,
+            "selected_choice": selected_choice,
+            "correct": correct,
+        })
+
+    # GETリクエストで問題を表示
+    return render(request, "dress/question_detail.html", {"question": question})
 
 # トップページビュー
 def index_view(request):
@@ -125,8 +165,38 @@ def home_view(request):
 def learn_view(request):
     return render(request, 'dress/learn.html')  # 中間学習画面
 
+@login_required
 def study_view(request):
-    return render(request, 'dress/study.html')  # ランダム問題学習画面
+    """
+    ランダム問題学習画面: ユーザーが選択した難易度に基づいてランダムな問題を出題。
+    """
+    user = request.user
+    difficulty = getattr(user, "difficulty", None)  # ユーザーが選択した難易度を取得
+
+    if not difficulty:
+        return render(request, 'dress/study.html', {"error": "難易度が選択されていません。"})
+
+    # 指定された難易度の問題を取得
+    questions = Question.objects.filter(difficulty=difficulty)
+
+    if not questions.exists():
+        return render(request, 'dress/study.html', {"error": f"{difficulty}の問題が見つかりません。"})
+
+    # ランダムに問題を選択
+    question = random.choice(questions)
+
+    # 選択した問題をテンプレートに渡す
+    context = {
+        "question": question,
+        "choices": {
+            "a": question.choice_a_text,
+            "b": question.choice_b_text,
+            "c": question.choice_c_text,
+            "d": question.choice_d_text,
+        },
+    }
+
+    return render(request, 'dress/question_detail.html', context)
 
 def review_view(request):
     return render(request, 'dress/review.html')  # 復習画面
