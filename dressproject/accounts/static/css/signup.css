@@ -1,0 +1,96 @@
+/* 全体の基本スタイル */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Georgia', serif;
+    background-color: #f8f9fa;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* メインコンテナ */
+.main-container {
+    height: 100vh;
+    aspect-ratio: 9 / 16;
+    background-image: url('../images/haikei.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+/* タイトルエリア */
+.title-box .main-title {
+    font-size: 28px;
+    font-style: italic;
+    color: #B39570;
+    margin-bottom: 10px;
+}
+
+.description {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.important-info {
+    font-weight: bold;
+    color: #B39570;
+}
+
+/* フォーム全体 */
+.form-container {
+    margin-top: 20px;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* フォームラベル */
+form label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+    text-align: left;
+    width: 80%;
+}
+
+/* 入力フィールド */
+form input {
+    width: 80%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* 登録ボタン */
+.register-button {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #B39570;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.register-button:hover {
+    background-color: #a38060;
+    transform: scale(1.05);
+}

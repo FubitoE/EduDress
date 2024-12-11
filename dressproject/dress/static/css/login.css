@@ -1,23 +1,25 @@
+@import url('https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c');
 /* 全体の基本スタイル */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Georgia', serif; /* フォントを変更 */
-    background-color: #f8f9fa;
-    height: 100vh; /* ビューポートの高さをフルに */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-family: 'italic', serif; /* フォントを変更 */
+    background-image: url('../images/haikei.png'); /* 背景画像を設定 */
+    background-size: cover; /* 背景画像が画面全体を覆うようにする */
+    background-position: center center; /* 画像を中央に配置 */
+    background-attachment: fixed; /* スクロールしても背景が動かないようにする */
+    width: 100vw; /* ビューポートの幅に合わせる */
+    height: 100vh; /* ビューポートの高さに合わせる */
+    overflow: hidden; /* スクロールを無効にする */
 }
 
 /* メインコンテナ */
 .main-container {
-    height: 100vh; /* ビューポートの高さをフルに */
-    aspect-ratio: 9 / 16; /* 縦横比を9:16に設定 */
-    background-image: url('../images/haikei.png'); /* 背景画像を設定 */
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    width: 100%; /* 画面幅にフィット */
+    height: 100%; /* 画面高さにフィット */
+    background-size: cover; /* 背景画像をディスプレイサイズに合わせる */
+    background-repeat: no-repeat; /* 背景画像を繰り返さない */
+    background-position: center; /* 背景画像を中央に配置 */
     border-radius: 15px;
     padding: 20px; /* コンテンツの余白を調整 */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -27,100 +29,84 @@ body {
     text-align: center;
 }
 
-/* タイトルエリア */
-.title-box .main-title {
-    font-size: 28px; /* スマホ向けにフォントサイズを調整 */
-    font-style: italic;
-    color: #B39570; /* ゴールド風の色 */
-    margin-bottom: 20px;
+.taitoru{
+    font-family: "Georgia", serif;
+    font-size: 200px; /* フォントサイズ */
+    font-style: italic; /* イタリック体 */
+    text-align: center; /* テキストの中央揃え */
+    color: #B39570; /* ダークグレーの文字色 */
 }
 
-/* ログインボタン */
-.login-button {
-    padding: 10px 20px;
-    font-size: 14px;
-    color: #fff;
-    background-color: #B39570; /* ゴールド風の背景色 */
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.login-button:hover {
-    background-color: #a38060; /* ホバー時に少し暗く */
-    transform: scale(1.05); /* 少し拡大 */
-}
-
-/* ポップアップのスタイル */
 .popup {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.popup.hidden {
-    display: none; /* 初期状態で非表示 */
-}
-
 .popup-content {
-    background: #fff;
+    background-color: #fff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 260px; /* スマホ向けに幅を調整 */
+    width: 300px;
+    border-radius: 10px;
     text-align: center;
+    position: relative;
 }
 
-.popup-content h2 {
-    margin-top: 0;
-    color: #333;
-    font-size: 18px; /* フォントサイズを調整 */
-}
-
-.popup-content form label {
+.popup-content label {
     display: block;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555;
+    text-align: left;
+    margin: 10px 0 5px;
 }
 
-.popup-content form input {
-    width: 80%;
-    padding: 8px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.popup-content input[type="text"],
+
+.popup-content input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
 }
 
-.popup-content form button {
-    padding: 8px 12px; /* ボタンサイズを調整 */
-    font-size: 14px;
-    color: #fff;
-    background-color: #007bff;
+.popup-content button {
+    background-color: black;
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
 }
 
-.popup-content form button:hover {
-    background-color: #0056b3;
-}
-
-/* 閉じるボタン */
-.close {
+.popup-content .close {
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 18px; /* フォントサイズを調整 */
-    color: #000;
+    font-size: 20px;
     cursor: pointer;
+} 
+
+.login-button{
+  display: inline-block;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  background: #B39570;
+  color: #FFF;
+  border-radius: 4px;
+  box-shadow: 0px 0px 0px 5px #B39570;
+  border: dashed 1px #FFF;
+  margin: 0 auto; /* 中央揃え */
+  width: 200px;
+}
+
+.loginbtn{
+    text-align: center; /* テキストの中央揃え */
+    margin-top: 300px;
 }

@@ -6,8 +6,8 @@ html, body {
   background-size: cover; /* 背景画像が画面全体を覆うようにする */
   background-position: center center; /* 画像を中央に配置 */
   background-attachment: fixed; /* スクロールしても背景が動かないようにする */
-  width: 100vw; /* ビューポートの幅に合わせる */
-  height: 100vh; /* ビューポートの高さに合わせる */
+  width: 100%; /* ビューポートの幅に合わせる */
+  height: 100%; /* ビューポートの高さに合わせる */
 }
 
 body::before {
@@ -26,8 +26,8 @@ body::before {
 .user-info {
   font-family: 'M PLUS Rounded 1c', sans-serif;
   position: absolute;
-  top: 30px;
-  left: 100px;
+  top: 20px;
+  left: 50px;
   background-color: white;
   padding: 15px 25px;
   border-radius: 15px;
@@ -35,7 +35,7 @@ body::before {
   font-size: 25px;
   line-height: 1.4;
   color: #333;
-  width: 400px;
+  width: auto;
   height: auto;
   font-weight: 400 !important; /* 文字の太さを統一 */
 
@@ -60,8 +60,8 @@ body::before {
 .stats {
   font-family: 'M PLUS Rounded 1c', sans-serif;
   position: absolute;
-  top: 30px;
-  left:  1300px; /* 右寄せから左寄せに変更 */
+  top: 20px;
+  left:  75%; /* 右寄せから左寄せに変更 */
   background-color: white;
   padding: 15px 25px;
   border-radius: 15px;
@@ -69,7 +69,7 @@ body::before {
   font-size: 25px;
   line-height: 1.4;
   color: #333;
-  width: 300px;
+  width: auto;
   height: auto;
   display: flex;
   

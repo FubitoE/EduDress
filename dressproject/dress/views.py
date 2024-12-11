@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from .models import Question, ExamYear
+from accounts.models import UserProgress
 import json
 import random  # randomをインポート
 
@@ -206,3 +207,17 @@ def all_questions_view(request):
 
 def select_difficulty_view(request):
     return render(request, 'dress/select_difficulty.html')  # 難易度選択画面
+
+@login_required
+def home_view(request):
+    # ユーザーの進行状況を取得
+    try:
+        progress = request.user.progress  # UserProgress の related_name を利用
+    except UserProgress.DoesNotExist:
+        # データがない場合は作成する
+        progress = UserProgress.objects.create(user=request.user)
+
+    return render(request, "dress/home.html", {
+        "user": request.user,
+        "progress": progress,  # ランクデータをテンプレートに渡す
+    })
