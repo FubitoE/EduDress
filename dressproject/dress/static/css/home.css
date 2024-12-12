@@ -61,7 +61,7 @@ body::before {
   font-family: 'M PLUS Rounded 1c', sans-serif;
   position: absolute;
   top: 20px;
-  left:  75%; /* 右寄せから左寄せに変更 */
+  left:  70%; /* 右寄せから左寄せに変更 */
   background-color: white;
   padding: 15px 25px;
   border-radius: 15px;
