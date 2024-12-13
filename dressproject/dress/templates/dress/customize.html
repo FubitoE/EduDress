@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -5,132 +7,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/test3.css">
-    <title>新規登録</title>
+    <link rel="stylesheet" href="{% static 'css/customize.css' %}">
+    <title>アバターの着せ替え</title>
 </head>
 
 <body>
-    <div class="highlight">
-        <!-- 選択結果を表示 -->
-        <div class="item-description" id="itemDescription">
-            <div id="layers">
-                <!-- 各レイヤー用のdiv -->
-                <img id="layer-head" class="layer" src="png/Image (3).png" alt="髪">
-                <img id="layer-face" class="layer" src="png/Image (2).png" alt="目">
-                <img id="layer-body" class="layer" src="png/Image_1.png" alt="胴体">
-                <img id="layer-skin" class="layer" src="png/Image.png" alt="肌">
-                <img id="layer-jungle" class="layer" src="png/Image_1.png" alt="">
-                <img id="layer-roam" class="layer" src="png/Image_1.png" alt="">
-            </div>
-        </div>
-
-        <!-- インベントリ -->
-        <div class="inventory-container">
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('head')">頭</div>
-                <div class="tab" onclick="switchTab('face')">顔</div>
-                <div class="tab" onclick="switchTab('body')">胴体</div>
-                <div class="tab" onclick="switchTab('skin')">肌</div>
-                <div class="tab" onclick="switchTab('jungle')">ジャングル</div>
-                <div class="tab" onclick="switchTab('roam')">ローム</div>
-            </div>
-            <!-- 頭 -->
-            <div id="head" class="tab-content">
-                <div class="item-grid">
-                    <div class="item" onclick="selectItem('頭', 'png/コイキング.png', 'layer-head')">
-                        <img src="png/コイキング.png" alt="コイキング">
-                    </div>
-                    <div class="item" onclick="selectItem('頭', 'png/カイリュー.png', 'layer-head')">
-                        <img src="png/カイリュー.png" alt="カイリュー">
-                    </div>
-                    <div class="item" onclick="selectItem('頭', 'png/Image (3).png', 'layer-head')">
-                        <img src="png/Image (3).png" alt="髪">
-                    </div>
-                    
-                </div>
-            </div>
-            <!-- 顔 -->
-            <div id="face" class="tab-content" style="display: none;">
-                <div class="item-grid">
-                    <div class="item" onclick="selectItem('顔', 'png/ピカチュウ.png', 'layer-face')">
-                        <img src="png/ピカチュウ.png" alt="ピカチュウ">
-                    </div>
-                    <div class="item" onclick="selectItem('顔', 'png/Image (2).png', 'layer-face')">
-                        <img src="png/Image (2).png" alt="目">
-                    </div>
-                </div>
-            </div>
-            <!-- 胴体 -->
-            <div id="body" class="tab-content" style="display: none;">
-                <div class="item-grid">
-                    <div class="item" onclick="selectItem('胴体', 'png/Image_1.png', 'layer-body')">
-                        <img src="png/Image_1.png" alt="胴体">
-                    </div>
-                </div>
-            </div>
-            <!-- 肌 -->
-            <div id="skin" class="tab-content" style="display: none;">
-                <div class="item-grid">
-                    <div class="item" onclick="selectItem('肌', 'png/Image.png', 'layer-skin')">
-                        <img src="png/Image.png" alt="肌">
-                    </div>
-                </div>
-            </div>
-            <!-- 保存・リセットボタン -->
-            <div class="button-container">
-                <button class="reset-button" onclick="resetSelection()">リセット</button>
-                <button class="save-button" onclick="saveSelection()">保存</button>
-            </div>
-        </div>
+    <!-- アバタープレビュー -->
+    <div class="avatar-preview">
+        <h2>プレビュー</h2>
+        <canvas id="avatar-canvas" width="400" height="400"></canvas>
     </div>
 
-    <script>
-        // タブ切り替え
-        function switchTab(tabId) {
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.style.display = 'none');
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).style.display = 'block';
-            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
-        }
+    <div class="customize-container">
+        <h1>アバターの着せ替え</h1>
 
-        // アイテム選択
-        function selectItem(itemName, itemImage, layerId) {
-            const layer = document.getElementById(layerId);
-            layer.src = itemImage;
-            layer.alt = itemName;
-        }
+        <!-- カテゴリ別のパーツ選択 -->
+        {% for category, category_name in PARTS_CATEGORY %}
+        <div class="category-container">
+            <h2>{{ category_name }}</h2>
+            <div class="parts-list">
+                {% for part in parts %}
+                    {% if part.parts_category == category %}
+                    <div class="part-item">
+                        <input 
+                            type="radio" 
+                            id="part_{{ part.parts_id }}" 
+                            name="{{ category }}" 
+                            value="{{ part.parts_image.url }}">
+                        <label for="part_{{ part.parts_id }}">
+                            <img src="{{ part.parts_image.url }}" alt="{{ part.parts_name }}" class="part-image">
+                            <p>{{ part.parts_name }}</p>
+                        </label>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
 
-        // リセット
-        function resetSelection() {
-            const layers = {
-                "layer-head": "png/Image (3).png",
-                "layer-face": "png/Image (2).png",
-                "layer-body": "png/Image_1.png",
-                "layer-skin": "png/Image.png",
-                "layer-jungle": "png/Image_1.png",
-                "layer-roam": "png/Image_1.png"
-            };
-
-            for (const [layerId, imageSrc] of Object.entries(layers)) {
-                const layer = document.getElementById(layerId);
-                layer.src = imageSrc;
-                layer.alt = '';
-            }
-        }
-
-        // 保存
-        function saveSelection() {
-            const layers = document.querySelectorAll('.layer');
-            const savedState = Array.from(layers).map(layer => ({
-                id: layer.id,
-                src: layer.src,
-                alt: layer.alt
-            }));
-            console.log('保存された状態:', savedState);
-        }
-    </script>
+        <!-- 保存ボタン -->
+        <button id="save-avatar" class="save-button">保存</button>
+    </div>
 </body>
 
+
+    <script>
+        const canvas = document.getElementById('avatar-canvas');
+        const ctx = canvas.getContext('2d');
+        const selectedParts = {};
+
+        // パーツの選択を監視
+        document.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.addEventListener('change', event => {
+                const category = input.name;
+                selectedParts[category] = input.value; // 選択した画像URLを保存
+                renderAvatar();
+            });
+        });
+
+        // Canvasにアバターを描画
+        function renderAvatar() {
+            const layers = Object.values(selectedParts); // 選択されたすべての画像URL
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // 画面をクリア
+
+            layers.forEach((url) => {
+                const img = new Image();
+                img.src = url;
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // レイヤーを順番に描画
+                };
+            });
+        }
+
+        // 保存リクエスト（Canvas画像を送信）
+        document.getElementById('save-avatar').addEventListener('click', () => {
+            const image = canvas.toDataURL('image/png'); // Canvasを画像データに変換
+
+            fetch('/api/save-avatar/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                body: JSON.stringify({ image })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => alert('保存中にエラーが発生しました。'));
+        });
+    </script>
+</body>
 </html>

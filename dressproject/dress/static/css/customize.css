@@ -1,0 +1,150 @@
+/* 全体の背景と配置 */
+body {
+    background-color: #f5e3d8;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* プレビューエリア */
+.avatar-preview {
+    width: 100%;
+    background-color: #2a3b5f;
+    padding: 20px 0;
+    text-align: center;
+    color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-preview h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+#avatar-canvas {
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+}
+
+/* カスタマイズコンテナ */
+.customize-container {
+    width: 80%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* カテゴリコンテナ */
+.category-container {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #2a3b5f;
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.category-container h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* パーツリスト：横並び */
+.parts-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* 各パーツ */
+.part-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100px;
+}
+
+.part-item input {
+    display: none;
+}
+
+.part-item label {
+    cursor: pointer;
+    text-align: center;
+}
+
+.part-item img {
+    width: 80px;
+    height: 80px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.part-item input:checked + label img {
+    border-color: #4caf50;
+    transform: scale(1.1);
+}
+
+.part-item p {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #fff;
+}
+
+/* 保存ボタン */
+.save-button {
+    background-color: #4caf50;
+    color: #fff;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.save-button:hover {
+    background-color: #45a049;
+}
+
+.save-button:active {
+    transform: scale(0.98);
+}
+
+.save-button:focus {
+    outline: none;
+}
+
+/* リセットボタン */
+.reset-button {
+    background-color: #f44336;
+    color: #fff;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-right: 10px;
+}
+
+.reset-button:hover {
+    background-color: #e53935;
+}
+
+.reset-button:active {
+    transform: scale(0.98);
+}
+
+.reset-button:focus {
+    outline: none;
+}

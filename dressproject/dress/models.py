@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings  # AUTH_USER_MODEL を参照するためにインポート
 
 # 難易度の選択肢
 DIFFICULTY = (
@@ -118,4 +119,9 @@ class Parts(models.Model):
         verbose_name_plural = "パーツ"
         ordering = ['parts_category', 'parts_name']
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
+    avatar_image = models.ImageField(upload_to="avatars/", blank=True, null=True)
 
+    def __str__(self):
+        return self.user.username

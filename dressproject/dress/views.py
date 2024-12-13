@@ -3,9 +3,11 @@ from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from .models import Question, ExamYear
+from .models import Question, ExamYear, Parts, Style
 from accounts.models import UserProgress
+from django.core.files.base import ContentFile
 import json
+import base64
 import random  # randomをインポート
 
 # 難易度を更新するAPIエンドポイント
@@ -221,3 +223,49 @@ def home_view(request):
         "user": request.user,
         "progress": progress,  # ランクデータをテンプレートに渡す
     })
+
+# アバター着せ替え画面
+@login_required
+def customize_view(request):
+    parts = Parts.objects.all().order_by('parts_category', 'parts_name')
+    context = {
+        "PARTS_CATEGORY": [
+            ('hair', '髪'),
+            ('base', '素体'),
+            ('eyes', '目'),
+            ('clothes', '服'),
+            ('accessory', 'アクセサリー'),
+            ('background', '背景')
+        ],
+        "parts": parts,
+    }
+    return render(request, "dress/customize.html", context)
+
+# 保存API
+@login_required
+@csrf_exempt
+def save_avatar(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            image_data = data.get("image")
+
+            if not image_data:
+                return JsonResponse({"success": False, "message": "画像データがありません。"})
+
+            # 画像データをデコードして保存
+            format, imgstr = image_data.split(';base64,')
+            ext = format.split('/')[-1]
+            file_name = f"user_{request.user.id}.png"
+            file_data = ContentFile(base64.b64decode(imgstr), name=file_name)
+
+            # ユーザープロフィールに保存
+            user_profile = request.user.profile
+            user_profile.avatar_image.save(file_name, file_data)
+            user_profile.save()
+
+            return JsonResponse({"success": True, "message": "アバターが保存されました！"})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": f"エラーが発生しました: {str(e)}"})
+
+    return JsonResponse({"success": False, "message": "無効なリクエストです。"})
