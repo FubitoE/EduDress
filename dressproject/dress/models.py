@@ -1,5 +1,8 @@
+import os
 from django.db import models
 from django.conf import settings  # AUTH_USER_MODEL を参照するためにインポート
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 # 難易度の選択肢
 DIFFICULTY = (
@@ -120,8 +123,36 @@ class Parts(models.Model):
         ordering = ['parts_category', 'parts_name']
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
-    avatar_image = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name="profile"
+    )
+    avatar_image = models.ImageField(
+        upload_to="avatars/", 
+        blank=True, 
+        null=True, 
+        default="avatars/default.png"
+    )
 
     def __str__(self):
         return self.user.username
+
+    def save(self, *args, **kwargs):
+        # 既存のインスタンスを取得し、古い画像を削除する準備をする
+        try:
+            old_instance = UserProfile.objects.get(pk=self.pk)
+            if old_instance.avatar_image and old_instance.avatar_image != self.avatar_image:
+                if old_instance.avatar_image.name != "avatars/default.png":  # デフォルト画像は削除しない
+                    old_instance.avatar_image.delete(save=False)
+        except UserProfile.DoesNotExist:
+            pass  # 新しいインスタンスの場合は何もしない
+
+        super().save(*args, **kwargs)
+
+
+# プロファイルが削除された際に画像も削除する
+@receiver(post_delete, sender=UserProfile)
+def delete_avatar_on_profile_delete(sender, instance, **kwargs):
+    if instance.avatar_image and instance.avatar_image.name != "avatars/default.png":
+        instance.avatar_image.delete(save=False)

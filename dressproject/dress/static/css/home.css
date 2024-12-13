@@ -104,8 +104,8 @@ body::before {
 }
 
 .character img {
-  max-width: 60%; /* 画像の最大幅を指定 */
-  max-height: 80%; /* 画像の最大高さを指定 */
+  width: 750px; /* 必要に応じて幅を自動調整 */
+  height: 750px; /* 必要に応じて高さを自動調整 */
   object-fit: contain; /* 画像が縦横比を保つ */
 }
 

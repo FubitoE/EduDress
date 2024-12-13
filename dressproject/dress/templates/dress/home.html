@@ -31,10 +31,27 @@
       <span>経験値: {{ progress.current_experience }} / {{ progress.experience_to_next_rank }}</span>
     </div>
 
-    <!-- アバター -->
     <div class="character">
-      <img src="{% static 'images/avatar.png' %}" alt="アバター画像">
-    </div>
+      {% if avatar_url %}
+          <img src="{{ avatar_url }}" alt="カスタムアバター画像">
+      {% else %}
+          <canvas id="default-avatar" width="400" height="400"></canvas>
+          <script>
+              const canvas = document.getElementById('default-avatar');
+              const ctx = canvas.getContext('2d');
+  
+              const defaultAvatarLayers = {{ default_avatar_urls|safe }};
+              defaultAvatarLayers.forEach((url) => {
+                  const img = new Image();
+                  img.src = url;
+                  img.onload = () => {
+                      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                  };
+              });
+          </script>
+      {% endif %}
+  </div>
+  
 
     <!-- 丸いボタン -->
     <button class="circle-button learn-button" onclick="location.href='/learn';">学習</button>

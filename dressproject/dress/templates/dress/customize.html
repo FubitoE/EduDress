@@ -47,6 +47,7 @@
 
         <!-- 保存ボタン -->
         <button id="save-avatar" class="save-button">保存</button>
+        <button id="go-home" class="home-button btn btn-secondary">ホームに戻る</button>
     </div>
 </body>
 
@@ -91,6 +92,11 @@
             .then(response => response.json())
             .then(data => alert(data.message))
             .catch(error => alert('保存中にエラーが発生しました。'));
+        });
+
+        // 「ホームに戻る」ボタンの動作
+        document.getElementById('go-home').addEventListener('click', () => {
+            window.location.href = '/home/'; // ホームに遷移
         });
     </script>
 </body>
