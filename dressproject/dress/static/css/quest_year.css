@@ -1,21 +1,39 @@
-/* 全体のスタイル */
+ /* 全体のスタイル */
+ body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;  /* 横方向に中央寄せ */
+    align-items: center;      /* 縦方向に中央寄せ */
+    height: 100vh;            /* ビューポートの高さに合わせる */
+    text-align: center;       /* テキストの中央寄せ */
+    background-image: url('/static/images/kokuban7-1280x720.png'); /* 画像のパス */
+    background-size: cover; /* 背景画像が画面全体を覆うようにする */
+    background-position: center center; /* 画像を中央に配置 */
+    background-attachment: fixed; /* スクロールしても背景が動かないようにする */
+    width: 100vw; /* ビューポートの幅に合わせる */
+    height: 100vh; /* ビューポートの高さに合わせる */
+}
+
 .highlight {
     max-width: 800px;
-    margin: 0 auto;
     padding: 20px;
-    text-align: center;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
+    background-image: url('/static/images/note.jpg');
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    filter: brightness(100%);
 }
 
 /* ページタイトル */
 .nendo h1 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
+    font-size: 35px;
+    color: #668ad8;
     margin-bottom: 20px;
+    border-bottom: 2px solid #668ad8;
+    display: inline-block;
+    padding-bottom: 5px;
 }
 
 /* 戻るボタン */
@@ -25,18 +43,20 @@
 }
 
 .botan {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #98BCAC;
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
+    font-size: 14px;
+    transition: background-color 0.3s;
 }
 
-.arrow-icon {
-    fill: #007bff;
-    transition: fill 0.3s;
-}
-
-.botan:hover .arrow-icon {
-    fill: #0056b3;
+.botan:hover {
+    background-color: #6a8d7c;
 }
 
 /* 年度リスト */
@@ -50,7 +70,7 @@
 .btn-custom {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #668ad8;
     color: #fff;
     text-decoration: none;
     border-radius: 5px;
@@ -61,13 +81,43 @@
 }
 
 .btn-custom:hover {
-    background-color: #0056b3;
+    background-color: #5073be;
     transform: scale(1.05);
 }
 
-/* メッセージのスタイル */
-p {
-    font-size: 18px;
+.empty-message {
+    margin-top: 50px;
     color: #666;
-    margin-top: 20px;
+    font-size: 18px;
+    display: flex;                /* フレックスボックスを使用 */
+    flex-direction: column;       /* 縦方向に配置 */
+    justify-content: flex-start;  /* ボタンを上に寄せる */
+    align-items: center;          /* 横方向に中央寄せ */
+    gap: 20px;                    /* ボタン間のスペース */
+    width: 100%;                  /* 横幅を100%にして全体に広がる */
+    max-width: 800px;             /* highlightと同じ最大幅に制限 */
+    margin: 0 auto;               /* 中央に配置 */
+}
+
+.empty-message p {
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.empty-message .btn-back {
+    margin-top: 20px;         /* 上にスペースを追加して位置調整 */
+    align-items: center;      /* 左に少しシフト */
+}
+
+ /* レスポンシブデザイン */
+ @media (max-width: 768px) {
+    .year-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-custom {
+        width: 100%;
+        max-width: 300px;
+    }
 }
