@@ -1,187 +1,192 @@
 @import url('/dressproject/dress/static/css/responsive.css');
-
-body {
-    height: 100%; /* ビューポートの高さを100%に設定 */
-    display: flex; /* Flexboxを有効化 */
-    justify-content: center; /* 横方向の中央揃え */
-    align-items: center; /* 縦方向の中央揃え */
-    margin: 0; /* ページ全体の余白を削除 */
-    padding: 0;
-    box-sizing: border-box;
-    background-color: #f8f9fa; /* 背景色（任意） */
-}
-
-.highlight {
-    background-image: url('../images/haikei.png'); /* 背景画像 */
-    background-size: cover; /* 背景画像を全体に拡大 */
-    background-position: center; /* 画像を中央に配置 */
-    padding: 20px; /* コンテンツの余白 */
-    width: 650px; /* コンテンツの最大幅 */
-    height: auto; /* 高さを内容に応じて設定 */
-    border-radius: 10px; /* 全体を少し丸める（任意） */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* シャドウを追加（任意） */
-    text-align: center; /* 全体のテキストを中央揃え */
-}
-
-/* タイトルのスタイル */
-.taitoru {
-    font-family: "Georgia", serif;
-    font-size: 80px; /* フォントサイズ */
-    font-style: italic;
-    color: #B39570; /* テキストの色 */
-    margin: 0; /* タイトルの余白を削除 */
-}
-
-/* CSSでY座標を調整 */
-.question-title {
-    margin-top: 0;
-    text-align: left;
-    font-size: 1.8em;
-    margin-bottom: 20px;
-}
-
-.question-image-top {
-    margin-bottom: 20px;
-    text-align: center; /* 中央揃え */
-}
-
-.question-image-middle {
-    margin: 20px 0; /* 上下に間隔を追加 */
-    text-align: center;
-}
-
-.question-image-bottom {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.question-content {
-    margin-top: 20px;
-}
-
-/* 回答するボタンのデザイン */
-.submit-button {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: #4caf50; /* 背景色を緑色に設定 */
-    color: white; /* 文字色を白に設定 */
-    border: none;
-    border-radius: 20px; /* ボタンを丸みのある形に */
-    cursor: pointer; /* ポインタを表示 */
-    font-size: 16px; /* フォントサイズを設定 */
-}
-
-.submit-button:hover {
-    background-color: #45a049; /* ホバー時の背景色を少し暗くする */
-}
-
-/* 選択肢全体のスタイル */
-.choices {
-    margin-top: 20px;
-}
-
-.choices label {
-    display: block;
-    margin-bottom: 15px;
-    cursor: pointer;
-    font-size: 16px;
-    text-align: left;
-}
-
-/* ラジオボタンを非表示 */
-.choices label input[type="radio"] {
-    display: none;
-}
-
-/* ボタン風のスタイル */
-.choices label span {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #45a846; /* 背景色 */
-    color: white;
-    border: none;
-    border-radius: 20px; /* 丸みを付ける */
-    font-size: 16px;
-    text-align: left;
-    cursor: pointer; /* カーソルをポインタに */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    line-height: 1.5;
-}
-
-/* 選択肢記号部分 (ア、イ、ウ、エ) の強調 */
-.choices label span strong {
-    margin-right: 10px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-/* ホバー時のスタイル */
-.choices label span:hover {
-    background-color: #88e16b; /* ホバー時に色を少し暗く */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 影を追加 */
-}
-
-/* 選択されたスタイル (修正箇所) */
-.choices label input[type="radio"]:checked + span {
-    background-color: #88e16b; /* 明るい緑色に変更 */
-    transform: scale(1.05); /* 選択時に少し拡大 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* より目立つ影 */
-}
-
-/* コンテナ全体の幅と高さの調整 */
-.container,
-.result {
-    max-width: 650px; /* 幅を完全に統一 */
-    width: 100%; /* 親要素の幅を基準に */
-    margin: 0 auto; /* 横方向の中央揃え */
-    box-sizing: border-box; /* パディングを含めて幅を計算 */
-}
-
-.container {
-    min-height: 100%; /* 最小高さを画面全体に設定 */
-    padding-bottom: 50px; /* 下部に余白を追加 */
-    box-sizing: border-box; /* パディングを含めた幅の計算 */
-}
-
-/* 解説部分のスタイル (修正箇所) */
-.result {
-    margin-top: 40px; /* 解説の位置調整 */
-    padding: 20px;
-    text-align: left;
-    background-color: #f8f9fa; /* 背景色 */
-    border-radius: 10px; /* 全体を丸くする */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* シャドウで視覚的分離 */
-}
-
-/* 正解時の背景色 (修正箇所) */
-.result.correct {
-    background-color: #7ceb96; /* 薄い緑色 */
-}
-
-/* 不正解時の背景色 (修正箇所) */
-.result.incorrect {
-    background-color: #faa7ae; /* 薄い赤色 */
-}
-
-/* 問題文のテキスト折り返し (修正箇所) */
-.question-text p {
-    word-wrap: break-word; /* 長い単語を折り返す */
-    overflow-wrap: break-word;
-    white-space: pre-wrap; /* 改行も反映 */
-    margin: 0; /* テキストの余白をリセット */
-}
-/* 正解メッセージのスタイル */
-.correct-message {
-    color: #7ceb96; /* 黄緑色 */
-    font-weight: bold;
-    font-size: 1.2em;
-}
-
-/* 不正解メッセージのスタイル */
-.incorrect-message {
-    color: #faa7ae; /* 赤色 */
-    font-weight: bold;
-    font-size: 1.2em;
-}
+ 
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;  /* 横方向に中央寄せ */
+            align-items: center;      /* 縦方向に中央寄せ */
+            height: 100vh;            /* ビューポートの高さに合わせる */
+            text-align: center;       /* テキストの中央寄せ */
+            background-image: url('/static/images/kokuban7-1280x720'); /* 画像のパス */
+            background-size: cover; /* 背景画像が画面全体を覆うようにする */
+            background-position: center center; /* 画像を中央に配置 */
+            background-attachment: fixed; /* スクロールしても背景が動かないようにする */
+            width: 100vw; /* ビューポートの幅に合わせる */
+            height: 100vh; /* ビューポートの高さに合わせる */
+        }
+ 
+ 
+        /* タイトルのスタイル */
+        .taitoru {
+            font-family: "Georgia", serif;
+            font-size: 80px; /* フォントサイズ */
+            font-style: italic;
+            color: #B39570; /* テキストの色 */
+            margin: 0; /* タイトルの余白を削除 */
+        }
+ 
+        /* CSSでY座標を調整 */
+        .question-title {
+            margin-top: 0;
+            text-align: left;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+ 
+        .question-image-top {
+            margin-bottom: 20px;
+            text-align: center; /* 中央揃え */
+        }
+ 
+        .question-image-middle {
+            margin: 20px 0; /* 上下に間隔を追加 */
+            text-align: center;
+        }
+ 
+        .question-image-bottom {
+            margin-top: 20px;
+            text-align: center;
+        }
+ 
+        .question-content {
+            margin-top: 20px;
+        }
+ 
+        /* 回答するボタンのデザイン */
+        .submit-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #98BCAC; /* 背景色を緑色に設定 */
+            color: white; /* 文字色を白に設定 */
+            border: none;
+            border-radius: 20px; /* ボタンを丸みのある形に */
+            cursor: pointer; /* ポインタを表示 */
+            font-size: 16px; /* フォントサイズを設定 */
+        }
+ 
+        .submit-button:hover {
+            background-color: #6a8d7c; /* ホバー時の背景色を少し暗くする */
+        }
+ 
+        /* 選択肢全体のスタイル */
+        .choices {
+            margin-top: 20px;
+        }
+ 
+        .choices label {
+            display: block;
+            margin-bottom: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: left;
+        }
+ 
+        /* ラジオボタンを非表示 */
+        .choices label input[type="radio"] {
+            display: none;
+        }
+ 
+        /* ボタン風のスタイル */
+        .choices label span {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #668ad8; /* 背景色 */
+            color: white;
+            border: none;
+            border-radius: 20px; /* 丸みを付ける */
+            font-size: 16px;
+            text-align: left;
+            cursor: pointer; /* カーソルをポインタに */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            line-height: 1.5;
+        }
+ 
+       
+ 
+        /* 選択肢記号部分 (ア、イ、ウ、エ) の強調 */
+        .choices label span strong {
+            margin-right: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+ 
+        /* ホバー時のスタイル */
+        .choices label span:hover {
+            background-color: #5073be; /* ホバー時に色を少し暗く */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 影を追加 */
+        }
+ 
+        /* 選択されたスタイル (修正箇所) */
+        .choices label input[type="radio"]:checked + span {
+            background-color: #5073be; /* 明るい緑色に変更 */
+            transform: scale(1.05); /* 選択時に少し拡大 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* より目立つ影 */
+        }
+ 
+        /* コンテナ全体の幅と高さの調整 */
+        .container,
+        .result {
+            max-width: 650px; /* 幅を完全に統一 */
+            width: 100%; /* 親要素の幅を基準に */
+            margin: 0 auto; /* 横方向の中央揃え */
+            box-sizing: border-box; /* パディングを含めて幅を計算 */
+        }
+ 
+        .container {
+            min-height: 100%; /* 最小高さを画面全体に設定 */
+            padding-bottom: 50px; /* 下部に余白を追加 */
+            box-sizing: border-box; /* パディングを含めた幅の計算 */
+            max-width: 800px;
+            padding: 20px;
+            background-image: url('note.jpg');
+            border-radius: 8px;
+            filter: brightness(100%);
+        }
+ 
+        /* 解説部分のスタイル (修正箇所) */
+        .result {
+            margin-top: 40px; /* 解説の位置調整 */
+            padding: 20px;
+            text-align: left;
+            background-color: #f8f9fa; /* 背景色 */
+            border-radius: 10px; /* 全体を丸くする */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* シャドウで視覚的分離 */
+        }
+ 
+        /* 正解時の背景色 (修正箇所) */
+        .result.correct {
+            background-color: #7ceb96; /* 薄い緑色 */
+        }
+ 
+        /* 不正解時の背景色 (修正箇所) */
+        .result.incorrect {
+            background-color: #faa7ae; /* 薄い赤色 */
+        }
+ 
+        /* 問題文のテキスト折り返し (修正箇所) */
+        .question-text p {
+            word-wrap: break-word; /* 長い単語を折り返す */
+            overflow-wrap: break-word;
+            white-space: pre-wrap; /* 改行も反映 */
+            margin: 0; /* テキストの余白をリセット */
+        }
+        /* 正解メッセージのスタイル */
+        .correct-message {
+            color: #7ceb96; /* 黄緑色 */
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+ 
+        /* 不正解メッセージのスタイル */
+        .incorrect-message {
+            color: #faa7ae; /* 赤色 */
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+ 

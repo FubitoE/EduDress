@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -7,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/customize.css' %}">
     <title>アバターの着せ替え</title>
+    <link rel="stylesheet" href="{% static 'css/customize.css' %}">
 </head>
 
 <body>
@@ -19,38 +18,49 @@
     </div>
 
     <div class="customize-container">
-        <h1>アバターの着せ替え</h1>
 
-        <!-- カテゴリ別のパーツ選択 -->
-        {% for category, category_name in PARTS_CATEGORY %}
-        <div class="category-container">
-            <h2>{{ category_name }}</h2>
-            <div class="parts-list">
-                {% for part in parts %}
-                    {% if part.parts_category == category %}
-                    <div class="part-item">
-                        <input 
-                            type="radio" 
-                            id="part_{{ part.parts_id }}" 
-                            name="{{ category }}" 
-                            value="{{ part.parts_image.url }}">
-                        <label for="part_{{ part.parts_id }}">
-                            <img src="{{ part.parts_image.url }}" alt="{{ part.parts_name }}" class="part-image">
-                            <p>{{ part.parts_name }}</p>
-                        </label>
-                    </div>
-                    {% endif %}
-                {% endfor %}
+        <!-- カテゴリタブ -->
+        <ul class="nav nav-tabs" id="avatar-tabs" role="tablist">
+            {% for category, category_name in PARTS_CATEGORY %}
+            <li class="nav-item">
+                <a class="nav-link" id="tab-{{ category }}" data-toggle="tab" href="#{{ category }}" role="tab" aria-controls="{{ category }}" aria-selected="false">{{ category_name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- タブの内容 -->
+        <div class="tab-content" id="avatar-tabs-content">
+            {% for category, category_name in PARTS_CATEGORY %}
+            <div class="tab-pane fade" id="{{ category }}" role="tabpanel" aria-labelledby="tab-{{ category }}">
+                <div class="parts-list">
+                    {% for part in parts %}
+                        {% if part.parts_category == category %}
+                        <div class="part-item">
+                            <input 
+                                type="radio" 
+                                id="part_{{ part.parts_id }}" 
+                                name="{{ category }}" 
+                                value="{{ part.parts_image.url }}">
+                            <label for="part_{{ part.parts_id }}">
+                                <img src="{{ part.parts_image.url }}" alt="{{ part.parts_name }}" class="part-image">
+                                <p>{{ part.parts_name }}</p>
+                            </label>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
 
         <!-- 保存ボタン -->
         <button id="save-avatar" class="save-button">保存</button>
         <button id="go-home" class="home-button btn btn-secondary">ホームに戻る</button>
     </div>
-</body>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
         const canvas = document.getElementById('avatar-canvas');
@@ -100,4 +110,5 @@
         });
     </script>
 </body>
+
 </html>

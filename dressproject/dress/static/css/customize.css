@@ -1,5 +1,5 @@
-/* 全体の背景と配置 */
-body {
+ /* 全体の背景と配置 */
+ body {
     background-color: #f5e3d8;
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -39,24 +39,29 @@ body {
     align-items: center;
 }
 
-/* カテゴリコンテナ */
-.category-container {
-    width: 100%;
-    margin-bottom: 20px;
-    padding: 10px;
+/* カテゴリタブのスタイル */
+.nav-tabs {
+    justify-content: center;
     background-color: #2a3b5f;
-    color: #fff;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.category-container h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-    text-align: center;
+.nav-tabs .nav-item {
+    margin: 0 10px;
 }
 
-/* パーツリスト：横並び */
+.nav-tabs .nav-link {
+    color: #fff;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #4caf50;
+}
+
 .parts-list {
     display: flex;
     flex-wrap: wrap;
@@ -64,7 +69,6 @@ body {
     gap: 10px;
 }
 
-/* 各パーツ */
 .part-item {
     display: flex;
     flex-direction: column;
@@ -94,13 +98,6 @@ body {
     transform: scale(1.1);
 }
 
-.part-item p {
-    margin-top: 5px;
-    font-size: 14px;
-    color: #fff;
-}
-
-/* 保存ボタン */
 .save-button {
     background-color: #4caf50;
     color: #fff;
@@ -116,15 +113,6 @@ body {
     background-color: #45a049;
 }
 
-.save-button:active {
-    transform: scale(0.98);
-}
-
-.save-button:focus {
-    outline: none;
-}
-
-/* リセットボタン */
 .reset-button {
     background-color: #f44336;
     color: #fff;
@@ -139,12 +127,4 @@ body {
 
 .reset-button:hover {
     background-color: #e53935;
-}
-
-.reset-button:active {
-    transform: scale(0.98);
-}
-
-.reset-button:focus {
-    outline: none;
 }
