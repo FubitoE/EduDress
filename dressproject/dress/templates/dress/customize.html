@@ -40,7 +40,8 @@
                                 type="radio" 
                                 id="part_{{ part.parts_id }}" 
                                 name="{{ category }}" 
-                                value="{{ part.parts_image.url }}">
+                                value="{{ part.parts_image.url }}" 
+                                {% if part.parts_default %}checked{% endif %}>
                             <label for="part_{{ part.parts_id }}">
                                 <img src="{{ part.parts_image.url }}" alt="{{ part.parts_name }}" class="part-image">
                                 <p>{{ part.parts_name }}</p>
@@ -67,6 +68,11 @@
         const ctx = canvas.getContext('2d');
         const selectedParts = {};
 
+        // デフォルトパーツを設定
+        document.querySelectorAll('input[type="radio"][checked]').forEach(input => {
+            selectedParts[input.name] = input.value;
+        });
+
         // パーツの選択を監視
         document.querySelectorAll('input[type="radio"]').forEach(input => {
             input.addEventListener('change', event => {
@@ -76,19 +82,27 @@
             });
         });
 
+        // レイヤー順序
+        const layerOrder = ['base', 'eyes', 'hair', 'clothes', 'accessory'];
+
         // Canvasにアバターを描画
         function renderAvatar() {
-            const layers = Object.values(selectedParts); // 選択されたすべての画像URL
             ctx.clearRect(0, 0, canvas.width, canvas.height); // 画面をクリア
 
-            layers.forEach((url) => {
-                const img = new Image();
-                img.src = url;
-                img.onload = () => {
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // レイヤーを順番に描画
-                };
+            layerOrder.forEach(category => {
+                const url = selectedParts[category];
+                if (url) {
+                    const img = new Image();
+                    img.src = url;
+                    img.onload = () => {
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // レイヤーを順番に描画
+                    };
+                }
             });
         }
+
+        // 初期描画
+        renderAvatar();
 
         // 保存リクエスト（Canvas画像を送信）
         document.getElementById('save-avatar').addEventListener('click', () => {
