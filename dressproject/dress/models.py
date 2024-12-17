@@ -89,8 +89,7 @@ PARTS_CATEGORY = [
     ('hair', '髪'),
     ('eyes', '目'),
     ('clothes', '服'),
-    ('accessory', 'アクセサリー'),
-    ('background', '背景')
+    ('accessory', 'アクセサリー')
 ]
 
 class Style(models.Model):

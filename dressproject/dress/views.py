@@ -10,6 +10,51 @@ import json
 import base64
 import random  # randomをインポート
 
+# パーツカテゴリーの描画順序
+PARTS_CATEGORY_ORDER = {
+    'background': 0,
+    'base': 1,
+    'clothes': 2,
+    'eyes': 3,
+    'accessory': 4,
+    'hair': 5,
+}
+
+# デフォルトアバター生成ロジック
+def render_default_avatar(user):
+    """
+    parts_default=Trueのパーツを`parts_category`順にソートして取得。
+    """
+    default_parts = Parts.objects.filter(parts_default=True)
+    sorted_parts = sorted(default_parts, key=lambda part: PARTS_CATEGORY_ORDER[part.parts_category])
+    return [part.parts_image.url for part in sorted_parts]
+
+@login_required
+def home_view(request):
+    """
+    ユーザーの進行状況、アバター情報を統合して表示。
+    """
+    # ユーザー進行状況の取得または作成
+    progress, created = UserProgress.objects.get_or_create(user=request.user)
+
+    # ユーザープロフィールとアバター
+    user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    avatar_url = user_profile.avatar_image.url if user_profile.avatar_image else None
+    default_avatar_urls = None
+
+    # カスタムアバターがない場合はデフォルトを生成
+    if not avatar_url:
+        default_avatar_urls = render_default_avatar(request.user)
+
+    context = {
+        "user": request.user,
+        "progress": progress,  # ランクと経験値情報
+        "avatar_url": avatar_url,  # カスタムアバターURL
+        "default_avatar_urls": default_avatar_urls,  # デフォルトアバター画像URL
+    }
+
+    return render(request, "dress/home.html", context)
+
 # 難易度を更新するAPIエンドポイント
 @login_required
 @csrf_exempt  # 必要に応じて追加（APIエンドポイント用）
@@ -160,27 +205,6 @@ class QuestionDetailView(DetailView):
             'correct': correct,
         })
 
-# ホームページビュー
-@login_required
-def home_view(request):
-    # ユーザープロフィールが存在するか確認
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-
-    # カスタムアバターのURLを取得
-    avatar_url = user_profile.avatar_image.url if user_profile.avatar_image else None
-
-    # デフォルトアバターを取得（カスタムアバターがない場合）
-    avatar_urls = None
-    if not avatar_url:
-        avatar_urls = render_default_avatar(request.user)
-
-    return render(request, "dress/home.html", {
-        "user": request.user,
-        "avatar_url": avatar_url,
-        "default_avatar_urls": avatar_urls,
-    })
-
-
 # 学習関連ビュー
 def learn_view(request):
     return render(request, 'dress/learn.html')  # 中間学習画面
@@ -226,20 +250,6 @@ def all_questions_view(request):
 
 def select_difficulty_view(request):
     return render(request, 'dress/select_difficulty.html')  # 難易度選択画面
-
-@login_required
-def home_view(request):
-    # ユーザーの進行状況を取得
-    try:
-        progress = request.user.progress  # UserProgress の related_name を利用
-    except UserProgress.DoesNotExist:
-        # データがない場合は作成する
-        progress = UserProgress.objects.create(user=request.user)
-
-    return render(request, "dress/home.html", {
-        "user": request.user,
-        "progress": progress,  # ランクデータをテンプレートに渡す
-    })
 
 # パーツカテゴリーの描画順序
 PARTS_CATEGORY_ORDER = {
@@ -293,28 +303,6 @@ def render_default_avatar(user):
     sorted_parts = sorted(default_parts, key=lambda part: PARTS_CATEGORY_ORDER[part.parts_category])
     image_urls = [part.parts_image.url for part in sorted_parts]
     return image_urls
-
-# ホーム画面ビュー
-@login_required
-def home_view(request):
-    """
-    - カスタムアバターが保存されている場合、それを表示。
-    - 保存されていない場合、デフォルトアバターを表示。
-    """
-    user_profile = UserProfile.objects.get(user_id=request.user.user_id)
-    avatar_url = user_profile.avatar_image.url if user_profile.avatar_image else None
-
-    if not avatar_url:
-        # デフォルトアバターのURLリストを生成
-        avatar_urls = render_default_avatar(request.user)
-    else:
-        avatar_urls = None
-
-    return render(request, "dress/home.html", {
-        "user": request.user,
-        "avatar_url": avatar_url,
-        "default_avatar_urls": avatar_urls,
-    })
 
 # アバターカスタマイズ画面
 @login_required

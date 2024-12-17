@@ -93,7 +93,7 @@ body::before {
 /* アバター表示 */
 .character {
   position: fixed; /* 固定配置 */
-  top: 50%; /* 上から50% */
+  top: 55%; /* 上から50% */
   left: 50%; /* 左から50% */
   transform: translate(-50%, -50%); /* 完全に中央に揃える */
   display: flex;
@@ -104,8 +104,8 @@ body::before {
 }
 
 .character img {
-  width: 750px; /* 必要に応じて幅を自動調整 */
-  height: 750px; /* 必要に応じて高さを自動調整 */
+  width: 700px; /* 必要に応じて幅を自動調整 */
+  height: 700px; /* 必要に応じて高さを自動調整 */
   object-fit: contain; /* 画像が縦横比を保つ */
 }
 
