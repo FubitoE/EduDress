@@ -1,5 +1,5 @@
- /* 全体の背景と配置 */
- body {
+/* 全体の背景と配置 */
+body {
     background-color: #f5e3d8;
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -12,7 +12,7 @@
 /* プレビューエリア */
 .avatar-preview {
     width: 100%;
-    background-color: #2a3b5f;
+    background-image: url('/static/images/check.png');
     padding: 20px 0;
     text-align: center;
     color: #fff;
@@ -33,7 +33,7 @@
 /* カスタマイズコンテナ */
 .customize-container {
     width: 80%;
-    margin-top: 20px;
+    margin-top: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -42,9 +42,13 @@
 /* カテゴリタブのスタイル */
 .nav-tabs {
     justify-content: center;
-    background-color: #2a3b5f;
+    color: #668ad8;
+    background-color: #fff;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    height: 47px;
+    width: 916px;
+    font-size: 16px;
 }
 
 .nav-tabs .nav-item {
@@ -52,14 +56,27 @@
 }
 
 .nav-tabs .nav-link {
-    color: #fff;
+    color: #668ad8;
     font-size: 16px;
     padding: 10px 20px;
     border-radius: 5px;
+    scroll-snap-align: start;
 }
 
 .nav-tabs .nav-link.active {
-    background-color: #4caf50;
+    background-color: #668ad8;
+    color: #fff;
+    font-size: 20px;
+}
+
+/* タグの下 */
+.tab-content{
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    width: 916px;
+    height: 400px;
+    overflow: auto; /* 内容がはみ出した場合にスクロールを表示 */
 }
 
 .parts-list {
@@ -94,37 +111,47 @@
 }
 
 .part-item input:checked + label img {
-    border-color: #4caf50;
+    border-color: #98BCAC;
     transform: scale(1.1);
 }
 
+/* ボタンを横並びにするためのコンテナ */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;  /* ボタンの間隔 */
+    margin-top: 30px;  /* 上部に余白を追加 */
+}
+
+/* 保存ボタン */
 .save-button {
-    background-color: #4caf50;
+    background-color: #98BCAC;
     color: #fff;
-    font-size: 18px;
+    font-size: 30px;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .save-button:hover {
-    background-color: #45a049;
+    background-color: #6a8d7c;
 }
 
-.reset-button {
-    background-color: #f44336;
+/* ホームに戻るボタン */
+.home-button {
     color: #fff;
-    font-size: 18px;
+    font-size: 25px;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;
-    margin-right: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.reset-button:hover {
-    background-color: #e53935;
+.home-button:hover {
+    background-color: #535353;
 }

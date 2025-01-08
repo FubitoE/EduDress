@@ -6,22 +6,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>学習画面</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'css/learn.css' %}">
 </head>
-<!-- 戻るボタン -->
-<div class="back">
-    <a href="{% url 'home' %}" class="botan">
-        <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" width="40" height="40" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-        </svg>
-    </a>
-</div>
-    <h1>学習メニュー</h1>
-    <div class="d-grid gap-3 col-6 mx-auto mt-4">
-      <button class="btn btn-primary" onclick="location.href='/learn/study';">ランダム問題を学習</button>
-      <button class="btn btn-success" onclick="location.href='/learn/review';">間違えた問題を復習</button>
-      <button class="btn btn-warning" onclick="location.href='/exam-years';">すべての問題を表示</button>
-      <button class="btn btn-info" onclick="location.href='/learn/select-difficulty';">資格を選択する</button>
+<body>
+  <div class="highlight">
+    <!-- 戻るボタン -->
+    <div class="back">
+      <a href="{% url 'home' %}" class="btn btn-back">
+          ホームに戻る
+      </a>
     </div>
-  </div>
+
+    <div class="nenyu">
+      <h1>学習メニュー</h1>
+    </div>
+    
+    <div class="d-grid gap-3 col-6 mx-auto mt-4">
+      <form id="difficulty-form">
+        {% csrf_token %}
+        <label for="difficulty">勉強する資格を選択:</label>
+        <select id="difficulty" name="difficulty">
+            <option value="IP">Iパス</option>
+            <option value="SG">セキュマネ</option>
+            <option value="FE">基本</option>
+            <option value="AP">応用</option>
+        </select>
+        <button type="submit">保存</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('difficulty-form').addEventListener('submit', function(event) {
+            event.preventDefault();  // フォームの通常送信を防ぐ
+
+            const difficulty = document.getElementById('difficulty').value;  // 選択した難易度を取得
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;  // CSRFトークン取得
+
+            fetch("{% url 'update_difficulty' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify({ difficulty })  // データをJSONとして送信
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                if (data.success) {
+                    messageDiv.style.color = "green";
+                    messageDiv.innerText = data.message;
+                    setTimeout(() => {
+                      window.location.href = "{% url 'learn' %}";  // 'learn' に対応するURLに遷移
+                    }, 1000);
+                } else {
+                    messageDiv.style.color = "red";
+                    messageDiv.innerText = data.message;
+                }
+            })
+            .catch(error => {
+                console.error("エラー:", error);
+                document.getElementById('message').innerText = "エラーが発生しました。";
+            });
+        });
+    </script>
+      <button class="btn btn-custom" onclick="location.href='/learn/study';">ランダム問題を学習</button>
+      <button class="btn btn-custom" onclick="location.href='/exam-years';">すべての問題を表示</button>
+    </div>
+    
+  </highlight>
 </body>
 </html>
