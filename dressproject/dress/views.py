@@ -109,28 +109,26 @@ def question_list_by_difficulty(request):
 @login_required
 def question_view(request, pk=None):
     """
-    - pk が指定されている場合: 特定の問題を取得
-    - pk が指定されていない場合: ランダムな問題を取得 (learn/study)
+    - pk が指定されている場合: 指定された問題を取得し、questions_number 昇順で次の問題を取得
+    - pk が指定されていない場合: ランダム出題ではなく固定された問題
     """
     if pk:
-        # 特定の問題を取得
+        # 現在の問題を取得
         question = get_object_or_404(Question, pk=pk)
+
+        # 次の問題を取得: 同じ難易度・年度で、questions_number の昇順で取得
+        next_question = (
+            Question.objects.filter(
+                difficulty=question.difficulty,
+                exam_year=question.exam_year,
+                questions_number__gt=question.questions_number  # 現在の番号より大きい問題を取得
+            ).order_by('questions_number').first()  # 昇順で最初の1件を取得
+        )
+        next_question_id = next_question.id if next_question else None
+
     else:
-        # ランダムな問題を取得: ユーザーの選択した難易度に基づく
-        user = request.user
-        difficulty = getattr(user, "difficulty", None)  # ユーザーが選択した難易度を取得
-
-        if not difficulty:
-            return render(request, "dress/question_detail.html", {"error": "難易度が選択されていません。"})
-
-        # 指定された難易度の問題を取得
-        questions = Question.objects.filter(difficulty=difficulty)
-
-        if not questions.exists():
-            return render(request, "dress/question_detail.html", {"error": f"{difficulty}の問題が見つかりません。"})
-
-        # ランダムに問題を選択
-        question = random.choice(questions)
+        # pk がない場合の処理 (通常はランダム出題やエラー処理)
+        return render(request, "dress/question_detail.html", {"error": "問題が指定されていません。"})
 
     # POSTリクエストで回答処理
     if request.method == "POST":
@@ -146,11 +144,14 @@ def question_view(request, pk=None):
             "question": question,
             "selected_choice": selected_choice,
             "correct": correct,
+            "next_question_id": next_question_id,  # 次の問題のIDを渡す
         })
 
     # GETリクエストで問題を表示
-    return render(request, "dress/question_detail.html", {"question": question})
-
+    return render(request, "dress/question_detail.html", {
+        "question": question,
+        "next_question_id": next_question_id,  # 次の問題のIDをテンプレートに渡す
+    })
 # トップページビュー
 def index_view(request):
     return render(request, "dress/index.html", {"user": request.user})

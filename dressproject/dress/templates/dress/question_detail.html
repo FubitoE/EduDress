@@ -124,6 +124,16 @@
 
             <!-- 解説表示用のボタン -->
             <button type="submit" class="submit-button">回答する</button>
+
+            <div class="next-question">
+                {% if next_question_id %}
+                    <a href="{% url 'question_detail' next_question_id %}" class="next-button">次の問題へ</a>
+                {% elif request.path == '/study/' %}
+                    <a href="{% url 'study_view' %}" class="next-button">次の問題へ</a>
+                {% else %}
+                    <p>次の問題はありません。</p>
+                {% endif %}
+            </div>
         </form>
 
         <!-- 回答後に解説と結果を表示 -->

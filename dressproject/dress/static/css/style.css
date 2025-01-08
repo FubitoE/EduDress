@@ -144,7 +144,7 @@
             box-sizing: border-box; /* パディングを含めた幅の計算 */
             max-width: 800px;
             padding: 20px;
-            background-image: url('note.jpg');
+            background-image: url('/static/images/note.jpg');
             border-radius: 8px;
             filter: brightness(100%);
         }
