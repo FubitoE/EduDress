@@ -68,6 +68,23 @@ class QuestionPart(models.Model):
         verbose_name_plural = "問題の一部"
         ordering = ['order']  # 順序で並び替え
 
+class RandomQuestion(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    question = models.ForeignKey('Question', on_delete=models.CASCADE)
+    randomquest_id = models.PositiveIntegerField(default=1)  # デフォルト値を設定
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # 既存の同じユーザーの質問数を取得
+        if not self.pk:  # 新しいオブジェクトの場合のみ処理
+            existing_count = RandomQuestion.objects.filter(user=self.user).count()
+            self.randomquest_id = existing_count + 1  # 連番を設定（1から始まる）
+
+        super().save(*args, **kwargs)  # 通常の保存を実行
+
+    def __str__(self):
+        return f"{self.user.username} - {self.question.questions_text} ({self.randomquest_id})"
+
 
 class Questionimg(models.Model):
     question = models.ForeignKey(Question, related_name='images', on_delete=models.CASCADE)

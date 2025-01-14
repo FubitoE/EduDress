@@ -1,11 +1,13 @@
 from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from .models import Question, ExamYear, Parts, UserProfile
+from .models import Question, ExamYear, Parts, UserProfile, RandomQuestion
 from accounts.models import UserProgress
 from django.core.files.base import ContentFile
+from .utils import extract_user_questions
 import json
 import base64
 import random  # randomをインポート
@@ -109,27 +111,24 @@ def question_list_by_difficulty(request):
 @login_required
 def question_view(request, pk=None):
     """
-    - pk が指定されている場合: 指定された問題を取得し、questions_number 昇順で次の問題を取得
-    - pk が指定されていない場合: ランダム出題ではなく固定された問題
+    - pk が指定されている場合: 特定の問題を取得
+    - pk が指定されていない場合: ランダムな問題を取得 (learn/study)
     """
     if pk:
-        # 現在の問題を取得
+        # 特定の問題を取得
         question = get_object_or_404(Question, pk=pk)
-
-        # 次の問題を取得: 同じ難易度・年度で、questions_number の昇順で取得
-        next_question = (
-            Question.objects.filter(
-                difficulty=question.difficulty,
-                exam_year=question.exam_year,
-                questions_number__gt=question.questions_number  # 現在の番号より大きい問題を取得
-            ).order_by('questions_number').first()  # 昇順で最初の1件を取得
-        )
-        next_question_id = next_question.id if next_question else None
-
     else:
-        # pk がない場合の処理 (通常はランダム出題やエラー処理)
-        return render(request, "dress/question_detail.html", {"error": "問題が指定されていません。"})
-
+        # ランダムな問題を取得: ユーザーの選択した難易度に基づく
+        user = request.user
+        difficulty = getattr(user, "difficulty", None)  # ユーザーが選択した難易度を取得
+        if not difficulty:
+            return render(request, "dress/question_detail.html", {"error": "難易度が選択されていません。"})
+        # 指定された難易度の問題を取得
+        questions = Question.objects.filter(difficulty=difficulty)
+        if not questions.exists():
+            return render(request, "dress/question_detail.html", {"error": f"{difficulty}の問題が見つかりません。"})
+        # ランダムに問題を選択
+        question = random.choice(questions)
     # POSTリクエストで回答処理
     if request.method == "POST":
         selected_choice = request.POST.get("choice")
@@ -138,32 +137,49 @@ def question_view(request, pk=None):
                 "question": question,
                 "error": "無効な選択肢です。",
             })
-
         correct = selected_choice == question.correct_answer
         return render(request, "dress/question_detail.html", {
             "question": question,
             "selected_choice": selected_choice,
             "correct": correct,
-            "next_question_id": next_question_id,  # 次の問題のIDを渡す
         })
-
     # GETリクエストで問題を表示
-    return render(request, "dress/question_detail.html", {
-        "question": question,
-        "next_question_id": next_question_id,  # 次の問題のIDをテンプレートに渡す
-    })
+    return render(request, "dress/question_detail.html", {"question": question})
 # トップページビュー
 def index_view(request):
     return render(request, "dress/index.html", {"user": request.user})
 
 # 出題年度一覧ビュー
+@login_required
 def exam_year_list(request):
-    exam_years = ExamYear.objects.all().order_by('-name')  # 年度を降順で取得
+    # 現在ログイン中のユーザーのdifficultyを取得
+    user_difficulty = request.user.difficulty
+
+    # ExamYearを全取得し、difficultyに基づいてフィルタリング
+    exam_years = ExamYear.objects.all().order_by('-name')
+    exam_years_with_questions = []
+
+    for exam_year in exam_years:
+        # 現在のユーザーのdifficultyと一致する問題が存在するか確認
+        questions = Question.objects.filter(exam_year=exam_year, difficulty=user_difficulty)
+
+        # データが存在する年度のみリストに追加
+        if questions.exists():
+            exam_years_with_questions.append({
+                'name': exam_year.name,
+                'has_questions': True,
+            })
+        else:
+            exam_years_with_questions.append({
+                'name': exam_year.name,
+                'has_questions': False,
+            })
+
     context = {
-        'exam_years': exam_years,
+        'exam_years': exam_years_with_questions,
+        'difficulty': user_difficulty,  # 現在の難易度をコンテキストに渡す
     }
     return render(request, 'dress/quest_year.html', context)
-
 # 問題一覧表示
 class ListQuestionsView(ListView):
     template_name = 'dress/quest_list.html'
@@ -325,3 +341,75 @@ def customize_view(request):
     }
     return render(request, "dress/customize.html", context)
 
+
+def start_quiz(request):
+    # ログイン中のユーザーの難易度に基づき問題を抽出
+    extract_user_questions(request.user)
+
+    # 最初の問題を取得
+    first_question = RandomQuestion.objects.order_by('id').first()
+
+    if not first_question:
+        return render(request, 'no_questions.html')  # 該当問題がない場合のページ
+
+    # クイズ開始画面を表示
+    return redirect('question_detail', question_id=first_question.id)
+
+@login_required
+def random_question_view(request):
+    user = request.user
+    difficulty = user.difficulty  # CustomUserモデルのdifficultyを取得
+
+    # 既存のランダム質問をクリア
+    RandomQuestion.objects.filter(user=user).delete()
+
+    # 指定された難易度の質問を取得
+    questions = Question.objects.filter(difficulty=difficulty)
+
+    if not questions.exists():
+        return render(request, 'dress/no_questions.html', {"error": f"{difficulty}の問題が見つかりません。"})
+
+    # ランダムに20問選択
+    random_questions = random.sample(list(questions), min(len(questions), 20))
+
+    # バルク作成用のオブジェクトリスト
+    random_question_objects = [
+        RandomQuestion(user=user, question=question, randomquest_id=i + 1)
+        for i, question in enumerate(random_questions)
+    ]
+
+    # 一括作成
+    RandomQuestion.objects.bulk_create(random_question_objects)
+
+    # 最初の質問ページにリダイレクト
+    first_question = RandomQuestion.objects.filter(user=user).order_by('id').first()
+    if not first_question:
+        return render(request, 'dress/no_questions.html', {"error": "質問を作成できませんでした。"})
+    return redirect('random_question_detail', pk=first_question.id)
+
+
+@login_required
+def random_question_detail(request, pk):
+    user = request.user
+    question_entry = get_object_or_404(RandomQuestion, pk=pk, user=user)
+    question = question_entry.question
+
+    if request.method == "POST":
+        selected_choice = request.POST.get("choice")
+        if not selected_choice or selected_choice not in ["a", "b", "c", "d"]:
+            return render(request, "dress/question_detail.html", {
+                "question": question,
+                "error": "無効な選択肢です。",
+            })
+
+        correct = selected_choice == question.correct_answer
+
+        # 次の質問を取得
+        next_question = RandomQuestion.objects.filter(user=user, id__gt=pk).order_by('id').first()
+
+        if next_question:
+            return redirect('random_question_detail', pk=next_question.id)
+        else:
+            return redirect('review')  # 全ての質問が終了したら復習画面に遷移
+
+    return render(request, "dress/question_detail.html", {"question": question})

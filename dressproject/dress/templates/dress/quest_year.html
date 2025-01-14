@@ -25,15 +25,19 @@
         <div class="year-container">
             {% if exam_years %}
                 {% for exam_year in exam_years %}
-                    <a href="{% url 'questions_by_year' exam_year.name %}" class="btn btn-custom">
-                        {{ exam_year.name }}年度
-                    </a>
-            {% endfor %}
+                    {% if exam_year.has_questions %}
+                        <!-- データがある場合だけボタンを表示 -->
+                        <a href="{% url 'questions_by_year' exam_year.name %}" class="btn btn-custom">
+                            {{ exam_year.name }}年度
+                        </a>
+                    {% endif %}
+                {% endfor %}
             {% else %}
-            <p>登録されている出題年度がありません。</p>
-            <a href="{% url 'home' %}" class="botan"> メニュー画面に戻る </a>
-          {% endif %}
+                <p>登録されている出題年度がありません。</p>
+                <a href="{% url 'home' %}" class="botan">メニュー画面に戻る</a>
+            {% endif %}
         </div>
+        
     </div>
 </body>
 </html>

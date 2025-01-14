@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Question, Questionimg, Parts, Style, ExamYear, QuestionPart, UserProfile
+from .models import Question, Questionimg, Parts, Style, ExamYear, QuestionPart, UserProfile, RandomQuestion
 
 from django.utils.html import format_html  # HTMLをレンダリングするためにインポート
 
@@ -60,3 +60,9 @@ class UserProfileAdmin(admin.ModelAdmin):
     avatar_preview.short_description = "Avatar Preview"  # カラム名を設定
 
 admin.site.register(UserProfile, UserProfileAdmin)
+
+@admin.register(RandomQuestion)
+class RandomQuestionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'question', 'randomquest_id', 'created_at')  # 管理サイトで表示する列
+    search_fields = ('user__username', 'question__questions_text')  # 検索フィールド
+    list_filter = ('user', 'created_at')  # フィルタリング機能
