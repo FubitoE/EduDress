@@ -394,22 +394,36 @@ def random_question_detail(request, pk):
     question_entry = get_object_or_404(RandomQuestion, pk=pk, user=user)
     question = question_entry.question
 
+    # 次の問題を取得
+    next_question = RandomQuestion.objects.filter(
+        user=user,
+        randomquest_id__gt=question_entry.randomquest_id
+    ).order_by('randomquest_id').first()
+
     if request.method == "POST":
         selected_choice = request.POST.get("choice")
         if not selected_choice or selected_choice not in ["a", "b", "c", "d"]:
-            return render(request, "dress/question_detail.html", {
+            return render(request, "dress/random_quest.html", {
                 "question": question,
                 "error": "無効な選択肢です。",
             })
 
         correct = selected_choice == question.correct_answer
 
-        # 次の質問を取得
-        next_question = RandomQuestion.objects.filter(user=user, id__gt=pk).order_by('id').first()
+        # 回答結果を表示するための情報をテンプレートに渡す
+        context = {
+            "question": question,
+            "randomquest_id": question_entry.randomquest_id,
+            "correct": correct,
+            "selected_choice": selected_choice,
+            "next_question_id": next_question.id if next_question else None
+        }
+        return render(request, "dress/random_quest.html", context)
 
-        if next_question:
-            return redirect('random_question_detail', pk=next_question.id)
-        else:
-            return redirect('review')  # 全ての質問が終了したら復習画面に遷移
+    # 初回表示用
+    return render(request, "dress/random_quest.html", {
+        "question": question,
+        "randomquest_id": question_entry.randomquest_id,
+        "next_question_id": next_question.id if next_question else None
+    })
 
-    return render(request, "dress/question_detail.html", {"question": question})
