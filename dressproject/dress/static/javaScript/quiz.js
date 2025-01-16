@@ -1,31 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // ログインボタンとポップアップ要素を取得
-    const openLoginBtn = document.getElementById("openLoginBtn");
-    const loginPopup = document.getElementById("loginPopup");
-    const closePopupBtn = document.getElementById("closePopupBtn");
-    const form = document.querySelector('form');
+    const form = document.querySelector('.choices-form'); // フォームセレクタを変更
     const resultDiv = document.querySelector('.result');
-
-    // ログインボタンがクリックされたときにポップアップを表示
-    if (openLoginBtn) {
-        openLoginBtn.addEventListener("click", () => {
-            loginPopup.style.display = "flex"; // ポップアップ表示
-        });
-    }
-
-    // 閉じるボタンがクリックされたときにポップアップを非表示
-    if (closePopupBtn) {
-        closePopupBtn.addEventListener("click", () => {
-            loginPopup.style.display = "none"; // ポップアップ非表示
-        });
-    }
-
-    // ポップアップ外をクリックしたときに閉じる
-    window.addEventListener("click", (event) => {
-        if (event.target === loginPopup) {
-            loginPopup.style.display = "none"; // ポップアップ外をクリックした場合も閉じる
-        }
-    });
 
     // フォームが送信された際の処理
     if (form) {
@@ -36,7 +11,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const selectedChoice = document.querySelector('input[name="choice"]:checked');
             
             if (selectedChoice) {
-                form.submit(); // 選択肢が選ばれていたらフォームを送信
+                // フォームデータを送信するための処理
+                const formData = new FormData(form);
+                
+                // ここで非同期でデータを送信する例（Fetch APIを使用）
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}', // CSRFトークンをヘッダに追加
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 送信後の処理（結果表示など）
+                    // 必要に応じてHTMLを更新する
+                    // 例えば、選択肢や結果の表示を更新する処理をここに追加
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             } else {
                 alert('選択肢を選んでください。');
             }

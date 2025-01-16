@@ -15,15 +15,6 @@
       <span id="nicknameField">ニックネーム: {{ request.user.nickname }}</span>
       <span id="usernameField">ユーザー名: {{ request.user.username }}</span>
     </div>
-
-    <div id="popup" class="popup hidden">
-      <form id="popupForm">
-          <label for="popupInput">新しい値を入力してください:</label>
-          <input type="text" id="popupInput" required>
-          <button type="submit" class="btn btn-primary">保存</button>
-          <button type="button" id="cancelButton" class="btn btn-secondary">キャンセル</button>
-      </form>
-   </div>
     
     <!-- ランクと経験値 -->
     <div class="stats">
@@ -50,6 +41,7 @@
               });
           </script>
       {% endif %}
+    </div>
   </div>
   
 

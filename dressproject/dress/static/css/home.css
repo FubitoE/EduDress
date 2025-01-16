@@ -19,7 +19,7 @@ body::before {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.); /* 背景色に透明度を追加 */
   pointer-events: none; /* このレイヤーはクリックイベントを無視 */
-}
+} 
 
 
 /* ユーザー情報 (左上に固定) */
@@ -59,11 +59,10 @@ body::before {
 /* ランクと経験値 (右上に固定) */
 .stats {
   font-family: 'M PLUS Rounded 1c', sans-serif;
-  position: absolute;
-  top: 20px;
-  left:  70%; /* 右寄せから左寄せに変更 */
+  top: 20px; /* 上端から20px */
+  right: 50px; /* 右端から50px */
+  position: absolute; /* 親要素に対して絶対位置を指定 */
   background-color: white;
-  padding: 15px 25px;
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   font-size: 25px;
@@ -71,13 +70,10 @@ body::before {
   color: #333;
   width: auto;
   height: auto;
-  display: flex;
-  
+
   /* デザイン */
-  position: relative;
   display: inline-block;
   font-weight: bold;
-  padding: 0.5em 1em;
   text-decoration: none;
   color: #668ad8;
   text-shadow: 0 0 5px white;
@@ -85,6 +81,7 @@ body::before {
   background: repeating-linear-gradient(-45deg, #cce7ff, #cce7ff 3px,#e9f4ff 3px, #e9f4ff 7px);
   transition: .4s;
 }
+
 
 .stats span {
   font-weight: bold;
@@ -181,39 +178,3 @@ body::before {
   box-shadow: 0px 0px 0px 5px #668ad8;
 }
 
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-}
-
-.hidden {
-  display: none;
-}
-
-.popup form {
-  display: flex;
-  flex-direction: column;
-}
-
-.popup label {
-  margin-bottom: 10px;
-}
-
-.popup input {
-  margin-bottom: 15px;
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.popup button {
-  margin-right: 10px;
-}

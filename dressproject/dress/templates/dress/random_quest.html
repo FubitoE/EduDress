@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="ja">
 {% csrf_token %}
@@ -7,12 +6,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ question.questions_text|truncatechars:30 }}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/randam.css' %}">
 </head>
 <body>
     <div class="container">
+        <!-- 戻るボタン -->
+        <div class="back1">
+            <a href="/learn/" class="btn btn-back">
+                学習メニューに戻る
+            </a>
+        </div>
+
         <!-- 問題文の表示 (最上部) -->
-        <h1 class="question-title">問題: {{ randomquest_id }}</h1>
+        <h1 class="question-title">問題: {{ question.questions_number }}</h1>
+
         <!-- 上部画像 (A) -->
         {% if question.images.all %}
             {% for image in question.images.all %}
@@ -125,29 +132,36 @@
             <!-- 解説表示用のボタン -->
             <button type="submit" class="submit-button">回答する</button>
 
-                      
         </form>
 
         <!-- 回答後に解説と結果を表示 -->
-        <div class="result">
-            {% if selected_choice %}
+        {% if selected_choice %}
+            <div class="result">
                 {% if correct %}
                     <p class="correct-message">正解です！</p>
                 {% else %}
                     <p class="incorrect-message">不正解です！</p>
                 {% endif %}
-        
+
                 <h3>解説:</h3>
-                <p>{{ question.explanation|linebreaks }}</p>
-        
-                <!-- 次の問題へのリンク -->
-                {% if next_question_id %}
-                    <a href="{% url 'random_question_detail' next_question_id %}" class="next-button">次の問題へ</a>
+                <p class="explanation">{{ question.explanation|linebreaks }}</p>
+                <div class="next">
+                    {% if next_question_id %}
+                    <a href="{% url 'random_question_detail' next_question_id %}" class="btn btn-back">次の問題へ</a>
+                </div>
                 {% else %}
                     <p>これ以上の問題はありません。</p>
-                {% endif %}
             {% endif %}
-        </div>        
+            </div>
+        {% endif %}
+
+          <!-- 戻るボタン -->
+        <div class="back2">
+            <a href="/learn/" class="btn btn-back">
+                学習メニューに戻る
+            </a>
+        </div>
+    </div>
 
     <script src="{% static 'js/quiz.js' %}"></script>
 </body>

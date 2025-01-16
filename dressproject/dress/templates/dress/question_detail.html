@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="ja">
 {% csrf_token %}
@@ -11,6 +10,11 @@
 </head>
 <body>
     <div class="container">
+        <!-- 戻るボタン -->
+        <div class="back1">
+            <button id="back-top" class="btn btn-back" onclick="history.go(-1);">問題一覧に戻る</button>
+        </div>
+
         <!-- 問題文の表示 (最上部) -->
         <h1 class="question-title">問題: {{ question.questions_number }}</h1>
 
@@ -125,16 +129,6 @@
 
             <!-- 解説表示用のボタン -->
             <button type="submit" class="submit-button">回答する</button>
-
-            <div class="next-question">
-                {% if next_question_id %}
-                    <a href="{% url 'question_detail' next_question_id %}" class="next-button">次の問題へ</a>
-                {% elif request.path == '/study/' %}
-                    <a href="{% url 'study_view' %}" class="next-button">次の問題へ</a>
-                {% else %}
-                    <p>次の問題はありません。</p>
-                {% endif %}
-            </div>
         </form>
 
         <!-- 回答後に解説と結果を表示 -->
@@ -149,7 +143,13 @@
                 <h3>解説:</h3>
                 <p class="explanation">{{ question.explanation|linebreaks }}</p>
             </div>
+            <div class="back2">
+                <button id="back-bottom" class="btn btn-back" onclick="history.go(-2);">問題一覧に戻る</button>
+            </div>
         {% endif %}
+
+          <!-- 戻るボタン -->
+                  
     </div>
 
     <script src="{% static 'js/quiz.js' %}"></script>
