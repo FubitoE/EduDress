@@ -68,14 +68,14 @@ def update_difficulty(request):
             valid_choices = ['IP', 'SG', 'FE', 'AP']
 
             if difficulty not in valid_choices:
-                return JsonResponse({"success": False, "message": "無効な難易度が選択されました。"})
+                return JsonResponse({"success": False, "message": "資格を選択してください。"})
 
             # ログイン中のユーザーに難易度を保存
             user = request.user
             user.difficulty = difficulty
             user.save()
 
-            return JsonResponse({"success": True, "message": "難易度が保存されました！"})
+            return JsonResponse({"success": True, "message": "資格が保存されました！"})
         except Exception as e:
             return JsonResponse({"success": False, "message": f"エラーが発生しました: {str(e)}"})
     return JsonResponse({"success": False, "message": "無効なリクエストです。"})
@@ -202,10 +202,18 @@ class ListQuestionsView(ListView):
         return context
 
 # 問題詳細ビュー
+from django.urls import reverse
+
 class QuestionDetailView(DetailView):
     template_name = 'dress/question_detail.html'
     model = Question
     context_object_name = 'question'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 関連する年度名 (exam_year_name) を取得してテンプレートに渡す
+        context['back_url'] = reverse('questions_by_year', kwargs={'exam_year_name': self.object.exam_year.name}) # 必要に応じて正しいフィールド名に変更
+        return context
 
     def post(self, request, *args, **kwargs):
         # 対象の問題オブジェクトを取得
@@ -215,12 +223,17 @@ class QuestionDetailView(DetailView):
         # 正解判定
         correct = selected_choice == self.object.correct_answer
 
+        # 戻る先の URL を生成
+        back_url = reverse('questions_by_year', kwargs={'exam_year_name': self.object.exam_year.name})
+
         # テンプレートを再レンダリング
         return render(request, self.template_name, {
             'question': self.object,
             'selected_choice': selected_choice,
             'correct': correct,
+            'back_url': back_url,  # 戻るボタン用の URL を渡す
         })
+
 
 # 学習関連ビュー
 def learn_view(request):
@@ -334,8 +347,7 @@ def customize_view(request):
             ('base', '素体'),
             ('eyes', '目'),
             ('clothes', '服'),
-            ('accessory', 'アクセサリー'),
-            ('background', '背景')
+            ('accessory', 'アクセサリー')
         ],
         "parts": parts,
     }
@@ -400,15 +412,28 @@ def random_question_detail(request, pk):
         randomquest_id__gt=question_entry.randomquest_id
     ).order_by('randomquest_id').first()
 
+    # 前の問題を取得
+    previous_question = RandomQuestion.objects.filter(
+        user=user,
+        randomquest_id__lt=question_entry.randomquest_id
+    ).order_by('-randomquest_id').first()
+
     if request.method == "POST":
         selected_choice = request.POST.get("choice")
         if not selected_choice or selected_choice not in ["a", "b", "c", "d"]:
             return render(request, "dress/random_quest.html", {
                 "question": question,
                 "error": "無効な選択肢です。",
+                "next_question_id": next_question.id if next_question else None,
+                "previous_question_id": previous_question.id if previous_question else None,
             })
 
         correct = selected_choice == question.correct_answer
+
+        # 正誤と選択肢を保存
+        question_entry.is_correct = correct
+        question_entry.selected_choice = selected_choice
+        question_entry.save()
 
         # 回答結果を表示するための情報をテンプレートに渡す
         context = {
@@ -416,7 +441,8 @@ def random_question_detail(request, pk):
             "randomquest_id": question_entry.randomquest_id,
             "correct": correct,
             "selected_choice": selected_choice,
-            "next_question_id": next_question.id if next_question else None
+            "next_question_id": next_question.id if next_question else None,
+            "previous_question_id": previous_question.id if previous_question else None,
         }
         return render(request, "dress/random_quest.html", context)
 
@@ -424,6 +450,48 @@ def random_question_detail(request, pk):
     return render(request, "dress/random_quest.html", {
         "question": question,
         "randomquest_id": question_entry.randomquest_id,
-        "next_question_id": next_question.id if next_question else None
+        "next_question_id": next_question.id if next_question else None,
+        "previous_question_id": previous_question.id if previous_question else None,
     })
 
+@login_required
+def result_view(request):
+    # ユーザーの進行状況を取得または作成
+    user_progress, created = UserProgress.objects.get_or_create(user=request.user)
+
+    # 未処理の`RandomQuestion`を取得
+    unprocessed_questions = RandomQuestion.objects.filter(user=request.user, is_processed=False)
+
+    if not unprocessed_questions.exists():
+        return render(request, 'dress/result.html', {
+            'error': "新しい回答データがありません。",
+            'user_progress': user_progress,
+        })
+
+    # 正解数と不正解数を集計
+    correct_count = unprocessed_questions.filter(is_correct=True).count()
+    incorrect_count = unprocessed_questions.filter(is_correct=False).count()
+
+    # 経験値を計算
+    total_experience = (correct_count * 3) + (incorrect_count * 1)
+
+    # ユーザーに経験値を追加
+    user_progress.add_experience(total_experience)
+
+    # 未処理データを`is_processed=True`に設定
+    unprocessed_questions.update(is_processed=True)
+
+    # 全回答数と正答率を計算
+    total_questions = RandomQuestion.objects.filter(user=request.user).count()
+    correct_answers = RandomQuestion.objects.filter(user=request.user, is_correct=True).count()
+    accuracy = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
+
+    # 結果をテンプレートに渡す
+    return render(request, 'dress/result.html', {
+        'user_progress': user_progress,
+        'total_questions': total_questions,
+        'correct_answers': correct_answers,
+        'accuracy': round(accuracy, 2),
+        'gained_experience': total_experience,
+        'remaining_experience': user_progress.experience_to_next_rank - user_progress.current_experience,
+    })

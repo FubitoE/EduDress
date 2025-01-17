@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>結果画面</title>
+    <link rel="stylesheet" href="{% static 'css/result.css' %}">
+</head>
+<body>
+    <div class="results">
+        <h3>クイズ結果</h3>
+        <p>回答済み問題数: {{ total_questions }}</p>
+        <p>正解数: {{ correct_answers }}</p>
+        <p>正答率: {{ accuracy }}%</p>
+        <p>今回の獲得経験値: {{ gained_experience }}</p>
+        <p>次のランクまであと: {{ remaining_experience }}経験値</p>
+        <!-- 戻るボタン -->
+        <div class="navigation">
+            <a href="/learn/" class="btn btn-back">学習メニューに戻る</a>
+        </div>
+    </div>
+</body>
+</html>

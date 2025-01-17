@@ -16,6 +16,7 @@ urlpatterns = [
     path('learn/', views.learn_view, name='learn'),  # 中間学習画面
     path('random_question/', views.random_question_view, name='random_question'),  # ランダム問題生成
     path('random_question/<int:pk>/', views.random_question_detail, name='random_question_detail'),  # ランダム問題学習画面
+    path('random_question/result/', views.result_view, name='result'),
     path('learn/review/', views.review_view, name='review'),  # 復習画面
     path('learn/all-questions/', views.all_questions_view, name='all_questions'),  # 問題一覧画面
     path('learn/select-difficulty/', views.select_difficulty_view, name='select_difficulty'),  # 難易度選択画面

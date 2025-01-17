@@ -18,7 +18,7 @@
         </div>
 
         <!-- 問題文の表示 (最上部) -->
-        <h1 class="question-title">問題: {{ question.questions_number }}</h1>
+        <h1 class="question-title">問題: {{ randomquest_id }}</h1>
 
         <!-- 上部画像 (A) -->
         {% if question.images.all %}
@@ -80,6 +80,7 @@
         <!-- 選択肢の表示 -->
         <form method="POST" class="choices-form">
             {% csrf_token %}
+            <input type="hidden" name="question_id" value="{{ random_question.id }}">
             <div class="choices">
                 <label for="choice_a">
                     <input type="radio" id="choice_a" name="choice" value="a" {% if selected_choice == 'a' %}checked{% endif %}>
@@ -146,11 +147,21 @@
                 <h3>解説:</h3>
                 <p class="explanation">{{ question.explanation|linebreaks }}</p>
                 <div class="next">
+
+                    <!-- 前の問題へのリンク -->
+                {% if previous_question_id %}
+                    <a href="{% url 'random_question_detail' previous_question_id %}" class="btn btn-back">前の問題へ</a>
+                {% endif %}
+
                     {% if next_question_id %}
                     <a href="{% url 'random_question_detail' next_question_id %}" class="btn btn-back">次の問題へ</a>
                 </div>
                 {% else %}
-                    <p>これ以上の問題はありません。</p>
+                <p>
+                    <a href="{% url 'result' %}" class="btn btn-result">
+                        結果画面に移動する
+                    </a>
+                </p>
             {% endif %}
             </div>
         {% endif %}

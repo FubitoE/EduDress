@@ -73,6 +73,9 @@ class RandomQuestion(models.Model):
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
     randomquest_id = models.PositiveIntegerField(default=1)  # デフォルト値を設定
     created_at = models.DateTimeField(auto_now_add=True)
+    is_correct = models.BooleanField(null=True, blank=True)  # 正誤判定を保存
+    selected_choice = models.CharField(max_length=1, null=True, blank=True)  # ユーザーの選択肢を保存
+    is_processed = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # 既存の同じユーザーの質問数を取得

@@ -12,8 +12,8 @@
     <div class="container">
         <!-- 戻るボタン -->
         <div class="back1">
-            <button id="back-top" class="btn btn-back" onclick="history.go(-1);">問題一覧に戻る</button>
-        </div>
+            <a href="{{ back_url }}" class="btn btn-back">年度別問題に戻る</a>
+        </div>        
 
         <!-- 問題文の表示 (最上部) -->
         <h1 class="question-title">問題: {{ question.questions_number }}</h1>
@@ -144,7 +144,7 @@
                 <p class="explanation">{{ question.explanation|linebreaks }}</p>
             </div>
             <div class="back2">
-                <button id="back-bottom" class="btn btn-back" onclick="history.go(-2);">問題一覧に戻る</button>
+                <a href="{{ back_url }}" class="btn btn-back">年度別問題に戻る</a>
             </div>
         {% endif %}
 

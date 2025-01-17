@@ -63,6 +63,14 @@ admin.site.register(UserProfile, UserProfileAdmin)
 
 @admin.register(RandomQuestion)
 class RandomQuestionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'question', 'randomquest_id', 'created_at')  # 管理サイトで表示する列
-    search_fields = ('user__username', 'question__questions_text')  # 検索フィールド
-    list_filter = ('user', 'created_at')  # フィルタリング機能
+    # 管理サイトで表示する列
+    list_display = ('user', 'question', 'randomquest_id', 'is_correct', 'selected_choice', 'created_at', 'is_processed')
+
+    # 検索フィールド
+    search_fields = ('user__username', 'question__questions_text')
+
+    # フィルタリング機能
+    list_filter = ('user', 'is_correct', 'created_at')
+
+    # 表示専用のフィールド（編集を許可しないフィールドを指定する場合）
+    readonly_fields = ('created_at', 'is_correct', 'selected_choice', 'is_processed')

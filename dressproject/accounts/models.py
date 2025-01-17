@@ -87,35 +87,36 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.nickname
 
 class UserProgress(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='progress')  # 外部キーで関連付け
-    current_rank = models.IntegerField(default=1)  # 初期ランクは1
-    current_experience = models.IntegerField(default=0)  # 現在の経験値
-    experience_to_next_rank = models.IntegerField(default=50)  # 次のランクまでの必要経験値
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='progress')
+    current_rank = models.IntegerField(default=1)
+    current_experience = models.IntegerField(default=0)
+    experience_to_next_rank = models.IntegerField(default=50)  # 初期値
 
     def add_experience(self, gained_experience):
-        """経験値を追加し、ランクアップをチェックする"""
+        """経験値を追加し、必要に応じてランクアップを処理する"""
         self.current_experience += gained_experience
 
-        # ランクアップ処理を実行
         while self.current_experience >= self.experience_to_next_rank:
             self.level_up()
 
         self.save()
 
     def level_up(self):
-        """ランクアップのロジック"""
-        if self.current_rank < 10:  # 最大ランクは10
-            self.current_experience -= self.experience_to_next_rank  # 次のランクへの経験値を減算
-            self.current_rank += 1  # ランクを上げる
-            self.experience_to_next_rank = self.calculate_next_rank_experience()  # 次のランク必要経験値を更新
+        """ランクアップ処理"""
+        if self.current_rank < 10:
+            # ランクアップ処理
+            self.current_experience -= self.experience_to_next_rank
+            self.current_rank += 1
+            self.experience_to_next_rank = self.calculate_next_rank_experience()
         else:
-            self.current_experience = self.experience_to_next_rank  # 最大ランクに到達時
+            # 最大ランクの場合、経験値はそのまま保持
+            self.current_experience = min(self.current_experience, self.experience_to_next_rank)
 
     def calculate_next_rank_experience(self):
         """次のランクに必要な経験値を計算"""
-        base_experience = 50  # ランク1の必要経験値
-        growth_factor = 1.5  # 必要経験値の増加率
+        base_experience = 50
+        growth_factor = 1.5
         return int(base_experience * (self.current_rank ** growth_factor))
 
     def __str__(self):
-        return f"{self.user.nickname} - Rank: {self.current_rank}"
+        return f"{self.user.nickname} - Rank: {self.current_rank} - EXP: {self.current_experience}/{self.experience_to_next_rank}"
