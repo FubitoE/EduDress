@@ -87,6 +87,17 @@ class RandomQuestion(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.question.questions_text} ({self.randomquest_id})"
+    
+class Review(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    question = models.ForeignKey('Question', on_delete=models.CASCADE)
+    is_correct = models.BooleanField(null=True, blank=True)
+    selected_choice = models.CharField(max_length=1, null=True, blank=True)
+    processed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.question.questions_text} ({self.is_correct})"
+
 
 
 class Questionimg(models.Model):

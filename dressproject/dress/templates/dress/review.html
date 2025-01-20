@@ -2,14 +2,62 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>復習画面</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>過去の間違い問題</title>
+    <link rel="stylesheet" href="{% static 'css/randam.css' %}">
 </head>
 <body>
-  <div class="container text-center mt-5">
-    <h1>間違えた問題を復習する</h1>
-    <p>ここに過去に間違えた問題の一覧が表示されます。</p>
-  </div>
+    <div class="container">
+        <!-- 戻るボタン -->
+        <div class="back1">
+            <a href="/learn/" class="btn btn-back">学習メニューに戻る</a>
+        </div>
+
+        <!-- 問題文の表示 -->
+        <h1 class="question-title">過去の間違い問題</h1>
+
+        {% if incorrect_reviews %}
+            {% for review in incorrect_reviews %}
+                <div class="question-container">
+                    <h2>問題: {{ review.id }}</h2>
+                    
+                    <!-- 解いた日付を表示 -->
+                    <p><strong>解いた日付:</strong> {{ review.processed_at|date:"Y年m月d日 H:i" }}</p>
+
+                    <!-- 問題文 -->
+                    <div class="question-text">
+                        <p>{{ review.question.questions_text|linebreaks }}</p>
+                    </div>
+
+                    <!-- 選択肢の表示 -->
+                    <div class="choices">
+                        <p><strong>あなたの選択:</strong> {{ review.selected_choice }}</p>
+                        <p><strong>正解:</strong> 
+                            {% if review.is_correct %}
+                                正解
+                            {% else %}
+                                不正解
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- 問題を解き直すリンク -->
+                    <div class="next">
+                        <a href="{% url 'solve_review_question' review.id %}" class="btn btn-back">問題を解き直す</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>間違えた問題はありません。</p>
+        {% endif %}
+
+        <!-- 戻るボタン -->
+        <div class="back2">
+            <a href="/learn/" class="btn btn-back">学習メニューに戻る</a>
+        </div>
+    </div>
+
+    <script src="{% static 'js/quiz.js' %}"></script>
 </body>
 </html>

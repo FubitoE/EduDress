@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Question, Questionimg, Parts, Style, ExamYear, QuestionPart, UserProfile, RandomQuestion
+from .models import Question, Questionimg, Parts, Style, ExamYear, QuestionPart, UserProfile, RandomQuestion, Review
 
 from django.utils.html import format_html  # HTMLをレンダリングするためにインポート
 
@@ -74,3 +74,10 @@ class RandomQuestionAdmin(admin.ModelAdmin):
 
     # 表示専用のフィールド（編集を許可しないフィールドを指定する場合）
     readonly_fields = ('created_at', 'is_correct', 'selected_choice', 'is_processed')
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('user', 'question', 'is_correct', 'selected_choice', 'processed_at')
+    search_fields = ('user__username', 'question__questions_text')
+    list_filter = ('user', 'is_correct', 'processed_at')
+    readonly_fields = ('processed_at', 'is_correct', 'selected_choice')

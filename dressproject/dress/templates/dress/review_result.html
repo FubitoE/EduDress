@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>結果画面</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- 結果の表示 -->
+        {% if correct %}
+            <p class="correct-message">正解です！</p>
+        {% else %}
+            <p class="incorrect-message">不正解です！</p>
+        {% endif %}
+
+        <h3>解説:</h3>
+        <p class="explanation">{{ question.explanation|linebreaks }}</p>
+
+        <h3>経験値</h3>
+        <p>今回獲得した経験値: {{ gained_experience }}</p>
+        <p>次のランクまで: {{ remaining_experience }}</p>
+
+        <!-- 学習メニューに戻る -->
+        <a href="/learn/" class="btn btn-back">学習メニューに戻る</a>
+    </div>
+</body>
+</html>

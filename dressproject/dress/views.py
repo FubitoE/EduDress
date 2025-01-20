@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404
+from django.db import transaction
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-from .models import Question, ExamYear, Parts, UserProfile, RandomQuestion
+from .models import Question, ExamYear, Parts, UserProfile, RandomQuestion, Review
 from accounts.models import UserProgress
 from django.core.files.base import ContentFile
 from .utils import extract_user_questions
@@ -47,6 +49,16 @@ def home_view(request):
     # カスタムアバターがない場合はデフォルトを生成
     if not avatar_url:
         default_avatar_urls = render_default_avatar(request.user)
+
+    # ランクが上がったかどうかを判定
+    previous_rank = progress.previous_rank  # previous_rankを保存しておく必要があります
+    current_rank = progress.current_rank
+    if current_rank > previous_rank:
+        messages.success(request, "ランクが上がりました！")
+
+    # ランクを保存しておく
+    progress.previous_rank = current_rank
+    progress.save()
 
     context = {
         "user": request.user,
@@ -283,7 +295,6 @@ def select_difficulty_view(request):
 
 # パーツカテゴリーの描画順序
 PARTS_CATEGORY_ORDER = {
-    'background': 0,
     'base': 1,
     'clothes': 2,
     'eyes': 3,
@@ -478,8 +489,19 @@ def result_view(request):
     # ユーザーに経験値を追加
     user_progress.add_experience(total_experience)
 
-    # 未処理データを`is_processed=True`に設定
-    unprocessed_questions.update(is_processed=True)
+    # データ移行処理をトランザクションで実行
+    with transaction.atomic():
+        for question in unprocessed_questions:
+            # Reviewにデータを移行
+            Review.objects.create(
+                user=question.user,
+                question=question.question,
+                is_correct=question.is_correct,
+                selected_choice=question.selected_choice,
+            )
+
+        # 未処理データを`is_processed=True`に設定
+        unprocessed_questions.update(is_processed=True)
 
     # 全回答数と正答率を計算
     total_questions = RandomQuestion.objects.filter(user=request.user).count()
@@ -494,4 +516,70 @@ def result_view(request):
         'accuracy': round(accuracy, 2),
         'gained_experience': total_experience,
         'remaining_experience': user_progress.experience_to_next_rank - user_progress.current_experience,
+    })
+
+@login_required
+def review_view(request):
+    # ログイン中のユーザーの過去の間違い問題を降順で取得
+    incorrect_reviews = Review.objects.filter(user=request.user, is_correct=False).order_by('id')
+
+    return render(request, 'dress/review.html', {
+        'incorrect_reviews': incorrect_reviews,
+    })
+
+from django.shortcuts import redirect
+
+@login_required
+def solve_review_question(request, review_id):
+    user = request.user
+    review = get_object_or_404(Review, id=review_id, user=user)
+    question = review.question
+
+    if request.method == "POST":
+        selected_choice = request.POST.get("choice")
+        if not selected_choice or selected_choice not in ["a", "b", "c", "d"]:
+            return render(request, "dress/solve_question.html", {
+                "review": review,
+                "question": question,
+                "error": "無効な選択肢です。",
+            })
+
+        correct = selected_choice == question.correct_answer
+
+        # 正誤結果を保存
+        review.selected_choice = selected_choice
+        review.is_correct = correct
+        review.save()
+
+        # リダイレクトして結果画面を表示
+        return redirect("review_result", review_id=review.id)
+
+    # 初回表示用
+    return render(request, "dress/solve_question.html", {
+        "review": review,
+        "question": question,
+    })
+
+@login_required
+def review_result(request, review_id):
+    user = request.user
+    review = get_object_or_404(Review, id=review_id, user=user)
+    question = review.question
+
+    # ユーザープログレスを取得または作成
+    user_progress, created = UserProgress.objects.get_or_create(user=user)
+
+    # 正解の場合は経験値を追加
+    gained_experience = 1 if review.is_correct else 0
+    if gained_experience > 0:
+        user_progress.add_experience(gained_experience)
+
+    remaining_experience = max(0, user_progress.experience_to_next_rank - user_progress.current_experience)
+
+    return render(request, "dress/review_result.html", {
+        "review": review,
+        "question": question,
+        "correct": review.is_correct,
+        "gained_experience": gained_experience,
+        "remaining_experience": remaining_experience,
     })

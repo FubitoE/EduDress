@@ -6,75 +6,98 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>学習画面</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="{% static 'css/learn.css' %}">
+  <link rel="stylesheet" href="/static/css/learn.css">
 </head>
 <body>
-  <div class="highlight">
-    <!-- 戻るボタン -->
-    <div class="back">
-      <a href="{% url 'home' %}" class="btn btn-back">
-          ホームに戻る
-      </a>
-    </div>
-
-    <div class="nenyu">
-      <h1>学習メニュー</h1>
-    </div>
+    <div class="highlight">
+      <!-- 戻るボタン -->
+        <div class="back">
+            <a href="/home/" class="btn btn-back">
+                ホームに戻る
+            </a>
+        </div>
+  
+        <div class="nenyu">
+            <h1>学習メニュー</h1>
+        </div>
     
-    <div class="d-grid gap-3 col-6 mx-auto mt-4">
-      <form id="difficulty-form">
-        {% csrf_token %}
-        <label for="difficulty">勉強する資格を選択:</label>
-        <select id="difficulty" name="difficulty">
-            <option value="">----</option>
-            <option value="IP">Iパス</option>
-            <option value="SG">セキュマネ</option>
-            <option value="FE">基本</option>
-            <option value="AP">応用</option>
-        </select>
-        <button type="submit">保存</button>
-    </form>
-    <div id="message"></div>
+        <div class="d-grid gap-3 col-7 mx-auto mt-4">
+            <form id="difficulty-form">
+                <div class="sikaku">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="CHjJ2nQBnEA8gyTGemcVqe3RhgySVAEfojvs0TDxTGzDhia20WfNc60z997gJdYd">
+                    <label class="selectbox-1">
+                    <select id="difficulty" name="difficulty">
+                        <option value="" hidden>資格を選択</option>
+                        <option value="IP">Iパス</option>
+                        <option value="SG">セキュマネ</option>
+                        <option value="FE">基本</option>
+                        <option value="AP">応用</option>
+                    </select>
+                </label>
+                <div class="hozon">
+                    <button class="btn btn-back" type="submit">保存</button>
+                </div>
+                </div>
+          </form>
+          <div id="message"></div>
+      
+          <script>
+                // ページロード時に、ローカルストレージから選択された値を取得してプルダウンメニューを更新
+                window.onload = function() {
+                    const savedDifficulty = localStorage.getItem('selectedDifficulty');
+                    if (savedDifficulty) {
+                    document.getElementById('difficulty').value = savedDifficulty;
+                    }
+                };
 
-    <script>
-        document.getElementById('difficulty-form').addEventListener('submit', function(event) {
-            event.preventDefault();  // フォームの通常送信を防ぐ
+                // フォーム送信時に、選択された値をローカルストレージに保存
+                document.getElementById('difficulty-form').addEventListener('submit', function(event) {
+                    const difficulty = document.getElementById('difficulty').value;
+                    localStorage.setItem('selectedDifficulty', difficulty);  // ローカルストレージに保存
+                });
 
-            const difficulty = document.getElementById('difficulty').value;  // 選択した難易度を取得
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;  // CSRFトークン取得
-
-            fetch("{% url 'update_difficulty' %}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken
-                },
-                body: JSON.stringify({ difficulty })  // データをJSONとして送信
-            })
-            .then(response => response.json())
-            .then(data => {
-                const messageDiv = document.getElementById('message');
-                if (data.success) {
-                    messageDiv.style.color = "green";
-                    messageDiv.innerText = data.message;
-                    setTimeout(() => {
-                      window.location.href = "{% url 'learn' %}";  // 'learn' に対応するURLに遷移
-                    }, 1000);
-                } else {
-                    messageDiv.style.color = "red";
-                    messageDiv.innerText = data.message;
-                }
-            })
-            .catch(error => {
-                console.error("エラー:", error);
-                document.getElementById('message').innerText = "エラーが発生しました。";
-            });
-        });
-    </script>
-        <button class="btn btn-custom" onclick="location.href='{% url 'random_question' %}';">ランダム問題を学習</button>
-        <button class="btn btn-custom" onclick="location.href='/exam-years';">すべての問題を表示</button>
+              document.getElementById('difficulty-form').addEventListener('submit', function(event) {
+                  event.preventDefault();  // フォームの通常送信を防ぐ
+      
+                  const difficulty = document.getElementById('difficulty').value;  // 選択した難易度を取得
+                  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;  // CSRFトークン取得
+      
+                  fetch("/api/update-difficulty/", {
+                      method: "POST",
+                      headers: {
+                          "Content-Type": "application/json",
+                          "X-CSRFToken": csrfToken
+                      },
+                      body: JSON.stringify({ difficulty })  // データをJSONとして送信
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      const messageDiv = document.getElementById('message');
+                      if (data.success) {
+                          messageDiv.style.color = "green";
+                          messageDiv.innerText = data.message;
+                          setTimeout(() => {
+                            window.location.href = "/learn/";  // 'learn' に対応するURLに遷移
+                          }, 1000);
+                      } else {
+                          messageDiv.style.color = "red";
+                          messageDiv.innerText = data.message;
+                      }
+                  })
+                  .catch(error => {
+                      console.error("エラー:", error);
+                      document.getElementById('message').innerText = "エラーが発生しました。";
+                  });
+              });
+          </script>
+            <button class="btn btn-custom" onclick="location.href='{% url 'random_question' %}';">ランダム問題を学習</button>
+            <button class="btn btn-custom" onclick="location.href='review';">復習</button>
+            <button class="btn btn-custom" onclick="location.href='/exam-years';">すべての問題を表示</button>
+        </div>
     </div>
-    
-  </highlight>
-</body>
+      
+    </highlight>
+  </body>
+  </html>
+  
 </html>

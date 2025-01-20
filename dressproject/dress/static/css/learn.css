@@ -1,5 +1,5 @@
-/* 全体のスタイル */
-body {
+ /* 全体のスタイル */
+ body {
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
     color: #333;
@@ -61,6 +61,66 @@ body {
     color: #fff;
 }
 
+.sikaku{
+    margin-top: 30px;
+    display: flex;
+}
+
+.hozon{
+    margin-left: 90px;
+}
+
+.selectbox-1 {
+    position: relative;
+    font-size: 18px;
+    left: 40px;
+}
+
+.selectbox-1::before,
+.selectbox-1::after {
+    position: absolute;
+    content: '';
+    pointer-events: none;
+}
+
+.selectbox-1::before {
+    display: inline-block;
+    right: 0;
+    width: 2.8em;
+    height: 2.8em;
+    border-radius: 0 3px 3px 0;
+    background-color: #668ad8;
+}
+
+.selectbox-1::after {
+    position: absolute;
+    top: 35%;
+    right: 1.4em;
+    transform: translate(50%, -50%) rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border-bottom: 3px solid #fff;
+    border-right: 3px solid #fff;
+}
+
+.selectbox-1 select {
+    appearance: none;
+    min-width: 260px;
+    height: 2.8em;
+    padding: .4em 3.6em .4em .8em;
+    border: none;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    color: #333;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.selectbox-1 select:focus {
+    outline: 2px solid #668ad8;
+}
+
+
 /* 問題リスト */
 .button-container {
     display: flex;
@@ -81,6 +141,7 @@ body {
     transition: background-color 0.3s, transform 0.2s;
     text-align: center;
     min-width: 120px;
+    margin-top: 30px;
 }
 
 .btn-custom:hover {
@@ -89,60 +150,6 @@ body {
     transform: scale(1.05);
 }
 
-/* 問題がない場合のメッセージ */
-.empty-message {
-    margin-top: 50px;
-    color: #666;
-    font-size: 18px;
-    display: flex;                /* フレックスボックスを使用 */
-    flex-direction: column;       /* 縦方向に配置 */
-    justify-content: flex-start;  /* ボタンを上に寄せる */
-    align-items: center;          /* 横方向に中央寄せ */
-    gap: 20px;                    /* ボタン間のスペース */
-    width: 100%;                  /* 横幅を100%にして全体に広がる */
-    max-width: 800px;             /* highlightと同じ最大幅に制限 */
-    margin: 0 auto;               /* 中央に配置 */
-}
-
-.empty-message p {
-    margin-bottom: 20px;
-    align-items: center;
-}
-
-.empty-message .btn-back {
-    margin-top: 20px;         /* 上にスペースを追加して位置調整 */
-    align-items: center;      /* 左に少しシフト */
-}
-
-/* カード形式にしたい場合（オプション） */
-.questions-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.question-card {
-    width: 250px;
-    padding: 15px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: left;
-}
-
-.question-card h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.question-card p {
-    font-size: 14px;
-    color: #555;
-    margin: 5px 0;
-}
 
 /* レスポンシブデザイン */
 @media (max-width: 768px) {

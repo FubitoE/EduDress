@@ -89,6 +89,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class UserProgress(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='progress')
     current_rank = models.IntegerField(default=1)
+    previous_rank = models.IntegerField(default=1)  # 追加: 前回のランク
     current_experience = models.IntegerField(default=0)
     experience_to_next_rank = models.IntegerField(default=50)  # 初期値
 

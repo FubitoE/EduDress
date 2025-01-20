@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -44,11 +45,30 @@
     </div>
   </div>
   
+  <!-- 丸いボタン -->
+  <button class="circle-button learn-button" onclick="location.href='/learn';">学習</button>
+  <button class="circle-button customize-button" onclick="location.href='/customize';">着せ替え</button>
 
-    <!-- 丸いボタン -->
-    <button class="circle-button learn-button" onclick="location.href='/learn';">学習</button>
-    <button class="circle-button customize-button" onclick="location.href='/customize';">着せ替え</button>
-  </div>
+  <!-- メッセージ表示 -->
+  {% if messages %}
+    <div id="popup-message" class="alert alert-success">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <script src="{% static 'js/home.js' %}"></script>
+  <script>
+    // ポップアップメッセージを自動で閉じる処理
+    window.addEventListener('load', function() {
+        const popup = document.getElementById('popup-message');
+        if (popup) {
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 3000);  // 3秒後にポップアップを非表示
+        }
+    });
+  </script>
 </body>
 </html>

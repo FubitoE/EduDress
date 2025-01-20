@@ -13,7 +13,6 @@
 <body>
     <!-- アバタープレビュー -->
     <div class="avatar-preview">
-        <h2>プレビュー</h2>
         <canvas id="avatar-canvas" width="400" height="400"></canvas>
     </div>
 
@@ -54,8 +53,10 @@
         </div>
 
         <!-- 保存ボタン -->
-        <button id="save-avatar" class="save-button">保存</button>
-        <button id="go-home" class="home-button btn btn-secondary">ホームに戻る</button>
+        <div class="button-container">
+            <button id="go-home" class="home-button btn btn-secondary">ホームに戻る</button>
+            <button id="save-avatar" class="save-button">保存</button>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
