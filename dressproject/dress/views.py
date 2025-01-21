@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import Http404
 from django.db import transaction
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
@@ -6,6 +7,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import now  # 追加
 from .models import Question, ExamYear, Parts, UserProfile, RandomQuestion, Review
 from accounts.models import UserProgress
 from django.core.files.base import ContentFile
@@ -13,6 +15,9 @@ from .utils import extract_user_questions
 import json
 import base64
 import random  # randomをインポート
+
+def page_not_found(request, exception):
+    return render(request, 'error_page.html', status=404)
 
 # パーツカテゴリーの描画順序
 PARTS_CATEGORY_ORDER = {
@@ -411,10 +416,20 @@ def random_question_view(request):
     return redirect('random_question_detail', pk=first_question.id)
 
 
+
 @login_required
 def random_question_detail(request, pk):
     user = request.user
-    question_entry = get_object_or_404(RandomQuestion, pk=pk, user=user)
+    
+    try:
+        # 存在しないIDの場合、404エラーが発生する
+        question_entry = get_object_or_404(RandomQuestion, pk=pk, user=user)
+    except Http404:
+        # カスタムエラーページを返す
+        return render(request, 'dress/error_page.html', {
+            'error': '指定された質問は存在しません。',
+        })
+    
     question = question_entry.question
 
     # 次の問題を取得
@@ -465,6 +480,7 @@ def random_question_detail(request, pk):
         "previous_question_id": previous_question.id if previous_question else None,
     })
 
+
 @login_required
 def result_view(request):
     # ユーザーの進行状況を取得または作成
@@ -498,6 +514,7 @@ def result_view(request):
                 question=question.question,
                 is_correct=question.is_correct,
                 selected_choice=question.selected_choice,
+                processed_at=now()  # 現在時刻を保存
             )
 
         # 未処理データを`is_processed=True`に設定
@@ -517,6 +534,7 @@ def result_view(request):
         'gained_experience': total_experience,
         'remaining_experience': user_progress.experience_to_next_rank - user_progress.current_experience,
     })
+
 
 @login_required
 def review_view(request):
@@ -574,6 +592,10 @@ def review_result(request, review_id):
     if gained_experience > 0:
         user_progress.add_experience(gained_experience)
 
+    # 正解の場合、Reviewモデルから削除
+    if review.is_correct:
+        review.delete()
+
     remaining_experience = max(0, user_progress.experience_to_next_rank - user_progress.current_experience)
 
     return render(request, "dress/review_result.html", {
@@ -583,3 +605,4 @@ def review_result(request, review_id):
         "gained_experience": gained_experience,
         "remaining_experience": remaining_experience,
     })
+

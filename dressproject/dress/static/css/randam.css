@@ -68,14 +68,8 @@ body {
     text-align: left;
 }
 
-.back2{
-    text-align: center;
-    margin-top: 30px;
-}
-
 .btn-back {
     display: inline-block;
-    margin-bottom: 20px;
     padding: 10px 15px;
     background-color: #98BCAC;
     color: #fff;
@@ -89,6 +83,50 @@ body {
 .btn-back:hover {
     background-color: #6a8d7c;
     color: #fff;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; 
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    width: 300px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    z-index: 10000; 
+}
+
+.popup-content label {
+    display: block;
+    text-align: center;
+    margin: 10px 0 5px;
+}
+
+
+.btn-popup {
+    display: flex;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.hidden {
+    display: none;
 }
 
 /* CSSでY座標を調整 */
@@ -203,7 +241,7 @@ body {
 }
 
 /* 解説部分のスタイル (修正箇所) */
-.result {
+.kaisetu {
     margin-top: 40px; /* 解説の位置調整 */
     padding: 20px;
     text-align: left;
@@ -213,12 +251,12 @@ body {
 }
 
 /* 正解時の背景色 (修正箇所) */
-.result.correct {
+.kaisetu.correct {
     background-color: #7ceb96; /* 薄い緑色 */
 }
 
 /* 不正解時の背景色 (修正箇所) */
-.result.incorrect {
+.kaisetu .incorrect {
     background-color: #faa7ae; /* 薄い赤色 */
 }
 
@@ -243,6 +281,33 @@ body {
     font-size: 1.2em;
 }
 
+.forth{
+    text-align: left;
+}
+
 .next{
     text-align: right; 
+}
+
+.result{
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.btn-result{
+    display: inline-block;
+    padding: 10px 45px;
+    background-color: #FFC36D;
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+.btn-result:hover {
+    background-color: #f1ab54; /* ホバー時の背景色を少し暗くする */
+
 }

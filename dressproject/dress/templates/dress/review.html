@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>過去の間違い問題</title>
+    <title>復習問題一覧画面</title>
     <link rel="stylesheet" href="{% static 'css/randam.css' %}">
 </head>
 <body>
@@ -13,9 +13,6 @@
         <div class="back1">
             <a href="/learn/" class="btn btn-back">学習メニューに戻る</a>
         </div>
-
-        <!-- 問題文の表示 -->
-        <h1 class="question-title">過去の間違い問題</h1>
 
         {% if incorrect_reviews %}
             {% for review in incorrect_reviews %}
@@ -49,7 +46,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p>間違えた問題はありません。</p>
+            <p>誤答した問題はありません。</p>
         {% endif %}
 
         <!-- 戻るボタン -->

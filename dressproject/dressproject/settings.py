@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts.apps.AccountsConfig',  # accounts アプリがある場合
+    'accounts.apps.AccountsConfig',  # accounts
     'dress.apps.DressConfig',
 ]
 

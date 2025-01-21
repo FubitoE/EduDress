@@ -83,7 +83,7 @@
         });
 
         // レイヤー順序
-        const layerOrder = ['base', 'eyes', 'hair', 'clothes', 'accessory'];
+        const layerOrder = ['base', 'eyes', 'clothes', 'accessory', 'hair'];
 
         // Canvasにアバターを描画
         function renderAvatar() {
@@ -103,6 +103,41 @@
 
         // 初期描画
         renderAvatar();
+
+        // 読み込みたい画像の順序とURLを指定
+    const layers = [
+        { src: '/path/to/base.png', name: 'base' }, // 素体
+        { src: '/path/to/eyes.png', name: 'eyes' }, // 目
+        { src: '/path/to/clothes.png', name: 'clothes' }, // 服
+        { src: '/path/to/accessory.png', name: 'accessory' }, // アクセサリー
+        { src: '/path/to/hair.png', name: 'hair' } // 髪
+    ];
+
+    // 画像を順番に読み込んで描画する関数
+    function loadImagesSequentially(layers) {
+        // `Promise`を使って順次処理を行う
+        layers.reduce((promise, layer) => {
+            return promise.then(() => {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.src = layer.src; // 画像のURLを設定
+                    img.onload = () => {
+                        // 画像がロードされたらCanvasに描画
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        console.log(`${layer.name} layer loaded`); // ログを出力
+                        resolve(); // 次の処理を進める
+                    };
+                    img.onerror = () => {
+                        console.error(`Failed to load ${layer.name} layer`);
+                        resolve(); // エラー時でも次の処理を進める
+                    };
+                });
+            });
+        }, Promise.resolve()); // 初期値は空のPromise
+    }
+
+    // 実行
+    loadImagesSequentially(layers);
 
         // 保存リクエスト（Canvas画像を送信）
         document.getElementById('save-avatar').addEventListener('click', () => {

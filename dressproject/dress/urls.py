@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import handler404
 from . import views
 from .views import ListQuestionsView, QuestionDetailView
 
@@ -25,3 +26,6 @@ urlpatterns = [
     path('api/update-difficulty/', views.update_difficulty, name='update_difficulty'),  # 難易度更新API
     path('api/question/', views.question_list_by_difficulty, name='question_list_by_difficulty'),  # ランダム問題取得API
 ]
+
+# handler404 を設定して、存在しないページにアクセスされた場合にエラーページを表示
+handler404 = 'dress.views.page_not_found'
