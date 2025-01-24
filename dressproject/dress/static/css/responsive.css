@@ -3,4 +3,17 @@
         width: 90%;
         padding: 15px;
     }
+@media (max-width: 768px) {
+    .result {
+        width: 90%;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .result {
+        width: 100%;
+        padding: 10px;
+    }
+}
 }

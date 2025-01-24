@@ -85,6 +85,18 @@ body {
     color: #fff;
 }
 
+.btn-result{
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #98BCAC;
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
 .popup {
     display: none;
     position: fixed;
@@ -243,7 +255,7 @@ body {
 /* 解説部分のスタイル (修正箇所) */
 .kaisetu {
     margin-top: 40px; /* 解説の位置調整 */
-    padding: 20px;
+    padding: 20px 20px 75px 20px; /* 内側の余白 */
     text-align: left;
     background-color: #f8f9fa; /* 背景色 */
     border-radius: 10px; /* 全体を丸くする */
@@ -282,10 +294,14 @@ body {
 }
 
 .forth{
+    float: left;
+    width: 30%;
     text-align: left;
 }
 
 .next{
+    float: right;
+    width: 50%;
     text-align: right; 
 }
 
@@ -295,19 +311,3 @@ body {
     margin-bottom: 20px;
 }
 
-.btn-result{
-    display: inline-block;
-    padding: 10px 45px;
-    background-color: #FFC36D;
-    color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 18px;
-    transition: background-color 0.3s;
-}
-
-.btn-result:hover {
-    background-color: #f1ab54; /* ホバー時の背景色を少し暗くする */
-
-}

@@ -91,13 +91,14 @@ class RandomQuestion(models.Model):
 class Review(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
+    randomquest_id = models.PositiveIntegerField()  # RandomQuestion の ID を保存
     is_correct = models.BooleanField(null=True, blank=True)
+    is_retry = models.BooleanField(default=False)  # 再挑戦中かどうかを記録
     selected_choice = models.CharField(max_length=1, null=True, blank=True)
     processed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.question.questions_text} ({self.is_correct})"
-
+        return f"{self.user.username} - {self.question.questions_text} ({self.randomquest_id})"
 
 
 class Questionimg(models.Model):

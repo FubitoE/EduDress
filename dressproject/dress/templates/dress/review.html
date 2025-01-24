@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>復習問題一覧画面</title>
-    <link rel="stylesheet" href="{% static 'css/randam.css' %}">
+    <link rel="stylesheet" href="{% static 'css/review.css' %}">
 </head>
 <body>
     <div class="container">
@@ -14,34 +14,33 @@
             <a href="/learn/" class="btn btn-back">学習メニューに戻る</a>
         </div>
 
+        <a class="daimei">
+            誤答した問題
+        </a>
+
         {% if incorrect_reviews %}
             {% for review in incorrect_reviews %}
                 <div class="question-container">
-                    <h2>問題: {{ review.id }}</h2>
-                    
-                    <!-- 解いた日付を表示 -->
-                    <p><strong>解いた日付:</strong> {{ review.processed_at|date:"Y年m月d日 H:i" }}</p>
-
-                    <!-- 問題文 -->
                     <div class="question-text">
-                        <p>{{ review.question.questions_text|linebreaks }}</p>
+                        <h2>問題: {{ review.randomquest_id }}</h2>
+                    
+                        <!-- 解いた日付を表示 -->
+                        <p><strong>解いた日付:</strong> <span class="highlight">{{ review.processed_at|date:"Y年m月d日 H:i" }}</span> </p>
+    
+                        <!-- 問題文 -->
+                        <div class="question-text">
+                            <p>{{ review.question.questions_text|linebreaks }}</p>
+                        </div>
+    
+                        <!-- 選択肢の表示 -->
+                        <div class="choices">
+                                <p><strong>あなたの選択:</strong> <span class="highlight">{{ review.translated_choice }}</span></p>
+                        </div>
+    
                     </div>
-
-                    <!-- 選択肢の表示 -->
-                    <div class="choices">
-                        <p><strong>あなたの選択:</strong> {{ review.selected_choice }}</p>
-                        <p><strong>正解:</strong> 
-                            {% if review.is_correct %}
-                                正解
-                            {% else %}
-                                不正解
-                            {% endif %}
-                        </p>
-                    </div>
-
                     <!-- 問題を解き直すリンク -->
                     <div class="next">
-                        <a href="{% url 'solve_review_question' review.id %}" class="btn btn-back">問題を解き直す</a>
+                        <a href="{% url 'solve_and_review_question' review_id=review.id %}" class="question-back">問題を解き直す</a>
                     </div>
                 </div>
             {% endfor %}
@@ -55,6 +54,20 @@
         </div>
     </div>
 
-    <script src="{% static 'js/quiz.js' %}"></script>
+    <script src="{% static 'js/quiz.js' %}">
+        // 選択された値（例としてaを初期値に設定）
+    let selectedChoice = "a";
+
+    // 値を置き換えるマッピング
+    const mapping = {
+        a: "ア",
+        b: "イ",
+        c: "ウ",
+        d: "エ"
+    };
+
+    // 日本語表記に変換
+    document.getElementById("choice").textContent = mapping[selectedChoice] || selectedChoice;
+    </script>
 </body>
 </html>

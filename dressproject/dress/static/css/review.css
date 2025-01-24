@@ -1,0 +1,143 @@
+@import url('/dressproject/dress/static/css/responsive.css');
+        
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;  /* 横方向に中央寄せ */
+    align-items: center;      /* 縦方向に中央寄せ */
+    height: 100vh;            /* ビューポートの高さに合わせる */
+    text-align: center;       /* テキストの中央寄せ */
+    background-image: url('/static/images/kokuban7-1280x720.png'); /* 画像のパス */
+    background-size: cover; /* 背景画像が画面全体を覆うようにする */
+    background-position: center center; /* 画像を中央に配置 */
+    background-attachment: fixed; /* スクロールしても背景が動かないようにする */
+    width: 100%; /* ビューポートの幅に合わせる */
+    height: 100%; /* ビューポートの高さに合わせる */
+}
+
+/* コンテナ全体の幅と高さの調整 */
+.container,
+.result {
+    max-width: 550px; /* 幅を完全に統一 */
+    width: 100%; /* 親要素の幅を基準に */
+    margin: 0 auto; /* 横方向の中央揃え */
+    box-sizing: border-box; /* パディングを含めて幅を計算 */
+}
+
+.container {
+    margin-top: 50px;
+    padding-bottom: 50px; /* 下部に余白を追加 */
+    box-sizing: border-box; /* パディングを含めた幅の計算 */
+    max-width: 830px;
+    height: 830px;
+    padding: 20px;
+    background-image: url('/static/images/note.jpg');
+    border-radius: 8px;
+    filter: brightness(100%);
+    overflow-y: auto; /* コンテンツが溢れた場合、縦方向にスクロールバーを表示 */
+}
+
+   /* スクロールバー全体のスタイル */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* スクロールバーの角を丸くする */
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+/* スクロールバーがホバーしたときのスタイル */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+/* スクロールバーの背景 */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.back1 {
+    text-align: left;
+}
+
+.question-back{
+    display: inline-block;
+    padding: 10px 15px;
+    background-color:  #668ad8;
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+.question-back:hover {
+    background-color: #5073be;
+    color: #fff;
+}
+
+.btn-back {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #98BCAC;
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+.btn-back:hover {
+    background-color: #6a8d7c;
+    color: #fff;
+}
+
+.daimei{
+    margin-top: 20px;
+    color: #FFC36D;
+    font-size: 50px;
+    border-bottom: 2px solid #FFC36D;
+    display: inline-block;
+}
+
+.question-container{
+    margin: auto;
+    margin-top: 30px;
+    width: 600px;
+    font-size: 18px;
+    padding: 20px;
+    background-color: #f8f9fa; /* 背景色 */
+    border-radius: 10px; /* 全体を丸くする */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* シャドウで視覚的分離 */
+}
+
+.question-text{
+    text-align: left;
+}
+
+.question-text h2{
+    color: #FFC36D;
+}
+
+.highlight{
+    color: #0f3e97;
+    font-size: 22px;
+}
+
+.next{
+    text-align: center;
+}
+
+.back2{
+    margin-top: 30px;
+}

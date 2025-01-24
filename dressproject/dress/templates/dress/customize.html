@@ -101,8 +101,8 @@
             });
         }
 
-        // 初期描画
-        renderAvatar();
+    // 初期描画
+    renderAvatar();
 
         // 読み込みたい画像の順序とURLを指定
     const layers = [
@@ -113,17 +113,34 @@
         { src: '/path/to/hair.png', name: 'hair' } // 髪
     ];
 
-    // 画像を順番に読み込んで描画する関数
+// 画像を順番に読み込んで描画する関数
     function loadImagesSequentially(layers) {
-        // `Promise`を使って順次処理を行う
-        layers.reduce((promise, layer) => {
+    // 素体を最初に読み込む
+    const baseLayer = layers.find(layer => layer.name === 'base');
+    const otherLayers = layers.filter(layer => layer.name !== 'base');
+
+    // 素体を読み込み
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = baseLayer.src; // 素体の画像URLを設定
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // 素体をCanvasに描画
+            console.log(`${baseLayer.name} layer loaded`); // 素体のログ
+            resolve(); // 素体読み込みが完了
+        };
+        img.onerror = () => {
+            console.error(`Failed to load ${baseLayer.name} layer`);
+            reject(new Error('Base layer loading failed'));
+        };
+    }).then(() => {
+        // 素体の読み込み完了後に他のレイヤーを順次読み込む
+        return otherLayers.reduce((promise, layer) => {
             return promise.then(() => {
                 return new Promise((resolve) => {
                     const img = new Image();
-                    img.src = layer.src; // 画像のURLを設定
+                    img.src = layer.src; // レイヤーの画像URLを設定
                     img.onload = () => {
-                        // 画像がロードされたらCanvasに描画
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // レイヤーをCanvasに描画
                         console.log(`${layer.name} layer loaded`); // ログを出力
                         resolve(); // 次の処理を進める
                     };
@@ -134,7 +151,18 @@
                 });
             });
         }, Promise.resolve()); // 初期値は空のPromise
-    }
+    });
+}
+
+// 呼び出し例
+loadImagesSequentially(layers)
+    .then(() => {
+        console.log('All layers loaded');
+    })
+    .catch(err => {
+        console.error('Error loading layers:', err);
+    });
+
 
     // 実行
     loadImagesSequentially(layers);

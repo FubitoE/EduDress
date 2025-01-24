@@ -12,14 +12,11 @@
     <div class="container">
         <!-- 戻るボタン -->
         <div class="back1">
-            <a href="/learn/review" class="btn btn-back">
-                復習一覧に戻る
-            </a>
+            <a href="/learn/review" class="btn btn-back">復習一覧に戻る</a>
         </div>
 
         <!-- 問題文の表示 -->
-        <h1 class="question-title">問題: {{ review.id }}</h1>
-
+        <h1 class="question-title">問題: {{ review.randomquest_id }}</h1>
 
         <!-- 上部画像 (A) -->
         {% if question.images.all %}
@@ -78,64 +75,98 @@
             {% endfor %}
         {% endif %}
 
-        <!-- 選択肢の表示 -->
-        <form method="POST" class="choices-form">
+        <form method="POST" class="choices-form" id="choices-form">
             {% csrf_token %}
-            <input type="hidden" name="question_id" value="{{ random_question.id }}">
+            <input type="hidden" name="question_id" value="{{ review.id }}">
+        
             <div class="choices">
                 <label for="choice_a">
-                    <input type="radio" id="choice_a" name="choice" value="a" {% if selected_choice == 'a' %}checked{% endif %}>
+                    <input 
+                        type="radio" 
+                        id="choice_a" 
+                        name="choice" 
+                        value="a" 
+                        {% if selected_choice == "a" %}checked{% endif %}
+                        {% if selected_choice and not is_retry %}disabled{% endif %}>
                     <span>
                         <strong>ア</strong>
                         {{ question.choice_a_text }}
-                        {% if question.choice_a_image %}
-                            <img src="{{ question.choice_a_image.url }}" alt="選択肢Aの画像">
-                        {% endif %}
                     </span>
                 </label>
                 <br>
-
                 <label for="choice_b">
-                    <input type="radio" id="choice_b" name="choice" value="b" {% if selected_choice == 'b' %}checked{% endif %}>
+                    <input 
+                        type="radio" 
+                        id="choice_b" 
+                        name="choice" 
+                        value="b" 
+                        {% if selected_choice == "b" %}checked{% endif %}
+                        {% if selected_choice and not is_retry %}disabled{% endif %}>
                     <span>
                         <strong>イ</strong>
                         {{ question.choice_b_text }}
-                        {% if question.choice_b_image %}
-                            <img src="{{ question.choice_b_image.url }}" alt="選択肢Bの画像">
-                        {% endif %}
                     </span>
                 </label>
                 <br>
-
                 <label for="choice_c">
-                    <input type="radio" id="choice_c" name="choice" value="c" {% if selected_choice == 'c' %}checked{% endif %}>
+                    <input 
+                        type="radio" 
+                        id="choice_c" 
+                        name="choice" 
+                        value="c" 
+                        {% if selected_choice == "c" %}checked{% endif %}
+                        {% if selected_choice and not is_retry %}disabled{% endif %}>
                     <span>
                         <strong>ウ</strong>
                         {{ question.choice_c_text }}
-                        {% if question.choice_c_image %}
-                            <img src="{{ question.choice_c_image.url }}" alt="選択肢Cの画像">
-                        {% endif %}
                     </span>
                 </label>
                 <br>
-
                 <label for="choice_d">
-                    <input type="radio" id="choice_d" name="choice" value="d" {% if selected_choice == 'd' %}checked{% endif %}>
+                    <input 
+                        type="radio" 
+                        id="choice_d" 
+                        name="choice" 
+                        value="d" 
+                        {% if selected_choice == "d" %}checked{% endif %}
+                        {% if selected_choice and not is_retry %}disabled{% endif %}>
                     <span>
                         <strong>エ</strong>
                         {{ question.choice_d_text }}
-                        {% if question.choice_d_image %}
-                            <img src="{{ question.choice_d_image.url }}" alt="選択肢Dの画像">
-                        {% endif %}
                     </span>
                 </label>
             </div>
         
-            <!-- 解説表示用のボタン -->
-            <button type="submit" class="submit-button">回答する</button>
+            <button 
+                type="submit" 
+                class="submit-button" 
+                id="submit-button" 
+                {% if selected_choice and not is_retry %}disabled{% endif %}>
+                回答する
+            </button>
+
+            {% if selected_choice %}
+            <div class="result">
+                <!-- 結果の表示 -->
+                {% if correct %}
+                    <p class="correct-message">正解です！</p>
+                {% else %}
+                    <p class="incorrect-message">不正解です！</p>
+                {% endif %}
+            
+                <h3>解説:</h3>
+                <p class="explanation">{{ question.explanation|linebreaks }}</p>
+            
+                <h3>経験値:</h3>
+                <p>次のランクまで: {{ remaining_experience }}</p>
+            
+                <!-- 学習メニューに戻る -->
+                <a href="/learn/review" class="btn btn-back">復習一覧に戻る</a>
+            </div>
+            {% endif %}
+            
         </form>
         
-
-    <script src="{% static 'js/quiz.js' %}"></script>
-</body>
+    </body>
+    <script src="{% static 'js/dynamic_review.js' %}"></script>
 </html>

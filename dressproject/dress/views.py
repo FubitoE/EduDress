@@ -512,6 +512,7 @@ def result_view(request):
             Review.objects.create(
                 user=question.user,
                 question=question.question,
+                randomquest_id=question.randomquest_id,  # randomquest_idを保存
                 is_correct=question.is_correct,
                 selected_choice=question.selected_choice,
                 processed_at=now()  # 現在時刻を保存
@@ -519,6 +520,9 @@ def result_view(request):
 
         # 未処理データを`is_processed=True`に設定
         unprocessed_questions.update(is_processed=True)
+
+    # 回答済み（is_correctにデータが入っている）問題数を計算
+    answered_questions_count = RandomQuestion.objects.filter(user=request.user, is_correct__isnull=False).count()
 
     # 全回答数と正答率を計算
     total_questions = RandomQuestion.objects.filter(user=request.user).count()
@@ -533,25 +537,48 @@ def result_view(request):
         'accuracy': round(accuracy, 2),
         'gained_experience': total_experience,
         'remaining_experience': user_progress.experience_to_next_rank - user_progress.current_experience,
+        'answered_questions_count': answered_questions_count,  # 回答済み問題数を追加
     })
 
 
 @login_required
 def review_view(request):
-    # ログイン中のユーザーの過去の間違い問題を降順で取得
+    # ログイン中のユーザーの過去の間違い問題を取得
     incorrect_reviews = Review.objects.filter(user=request.user, is_correct=False).order_by('id')
 
+    # 選択肢を変換するマッピングを定義
+    choice_mapping = {
+        'a': 'ア',
+        'b': 'イ',
+        'c': 'ウ',
+        'd': 'エ'
+    }
+
+    # レビュー内容を変換
+    incorrect_reviews_list = []
+    for review in incorrect_reviews:
+        # reviewオブジェクトに対応する変換済みの選択肢を追加
+        review.translated_choice = choice_mapping.get(review.selected_choice, review.selected_choice)
+        incorrect_reviews_list.append(review)
+
     return render(request, 'dress/review.html', {
-        'incorrect_reviews': incorrect_reviews,
+        'incorrect_reviews': incorrect_reviews_list,
     })
 
 from django.shortcuts import redirect
 
+
 @login_required
-def solve_review_question(request, review_id):
-    user = request.user
-    review = get_object_or_404(Review, id=review_id, user=user)
+def solve_and_review_question(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
     question = review.question
+
+    user_progress, created = UserProgress.objects.get_or_create(user=request.user)
+
+    # 初回アクセス時に「再挑戦中」とマークする
+    if not review.is_retry:
+        review.is_retry = True
+        review.save()
 
     if request.method == "POST":
         selected_choice = request.POST.get("choice")
@@ -562,21 +589,43 @@ def solve_review_question(request, review_id):
                 "error": "無効な選択肢です。",
             })
 
+        # 正解かどうか判定
         correct = selected_choice == question.correct_answer
 
-        # 正誤結果を保存
+        # Reviewオブジェクトを更新
         review.selected_choice = selected_choice
         review.is_correct = correct
         review.save()
 
-        # リダイレクトして結果画面を表示
-        return redirect("review_result", review_id=review.id)
+        # 経験値を追加
+        gained_experience = 1 if correct else 0
+        if gained_experience > 0:
+            user_progress.add_experience(gained_experience)
 
-    # 初回表示用
+        # 正解した場合、復習リストから削除
+        if correct:
+            with transaction.atomic():
+                review.delete()
+
+        # 次のランクまでの経験値を計算
+        remaining_experience = max(0, user_progress.experience_to_next_rank - user_progress.current_experience)
+
+        # フォーム送信後の状態をテンプレートに渡す
+        return render(request, "dress/solve_question.html", {
+            "review": review,
+            "question": question,
+            "selected_choice": selected_choice,
+            "correct": correct,
+            "remaining_experience": remaining_experience,
+        })
+
     return render(request, "dress/solve_question.html", {
         "review": review,
         "question": question,
+        "is_retry": review.is_retry,  # 再挑戦フラグを渡す
+        "selected_choice": review.selected_choice if not review.is_retry else None,  # 再挑戦時は選択状態をクリア
     })
+
 
 @login_required
 def review_result(request, review_id):
