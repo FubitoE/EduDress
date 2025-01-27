@@ -142,6 +142,7 @@ class Parts(models.Model):
     parts_style = models.ForeignKey(Style, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="スタイル")
     parts_default = models.BooleanField(default=False)
     parts_image = models.ImageField(upload_to='parts/')
+    unlock_rank = models.IntegerField(default=1, verbose_name="アンロックランク")  # 新しいフィールドを追加
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新日時")
 
@@ -152,6 +153,7 @@ class Parts(models.Model):
         verbose_name = "パーツ"
         verbose_name_plural = "パーツ"
         ordering = ['parts_category', 'parts_name']
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
@@ -165,6 +167,7 @@ class UserProfile(models.Model):
         null=True, 
         default="avatars/default.png"
     )
+    selected_parts = models.ManyToManyField(Parts, blank=True)  # selected_parts を追加
 
     def __str__(self):
         return self.user.username

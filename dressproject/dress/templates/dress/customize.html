@@ -35,16 +35,29 @@
                     {% for part in parts %}
                         {% if part.parts_category == category %}
                         <div class="part-item">
-                            <input 
-                                type="radio" 
-                                id="part_{{ part.parts_id }}" 
-                                name="{{ category }}" 
-                                value="{{ part.parts_image.url }}" 
-                                {% if part.parts_default %}checked{% endif %}>
-                            <label for="part_{{ part.parts_id }}">
-                                <img src="{{ part.parts_image.url }}" alt="{{ part.parts_name }}" class="part-image">
-                            </label>
+                            {% if user_rank >= part.unlock_rank %}
+                                <!-- 使用可能なパーツ -->
+                                <input 
+                                    type="radio" 
+                                    id="part_{{ part.parts_id }}" 
+                                    name="{{ category }}" 
+                                    value="{{ part.parts_image.url }}" 
+                                    {% if part.parts_default %}checked{% endif %}>
+                                <label for="part_{{ part.parts_id }}">
+                                    <img src="{{ part.parts_image.url }}" alt="{{ part.parts_name }}" class="part-image">
+                                </label>
+                            {% else %}
+                                <!-- 使用不可のパーツ -->
+                                <div class="locked-part">
+                                    <img src="{{ part.parts_image.url }}" alt="{{ part.parts_name }}" class="part-image locked">
+                                    <div class="lock-overlay">
+                                        <span class="lock-icon">🔒</span>
+                                        <span>ランク{{ part.unlock_rank }}で解放</span>
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
+                        
                         {% endif %}
                     {% endfor %}
                 </div>
@@ -64,127 +77,91 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        const canvas = document.getElementById('avatar-canvas');
-        const ctx = canvas.getContext('2d');
-        const selectedParts = {};
+        document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('avatar-canvas');
+    const ctx = canvas.getContext('2d');
+    const selectedParts = {};
 
-        // デフォルトパーツを設定
-        document.querySelectorAll('input[type="radio"][checked]').forEach(input => {
-            selectedParts[input.name] = input.value;
+    // デフォルトパーツを設定
+    document.querySelectorAll('input[type="radio"][checked]').forEach(input => {
+        selectedParts[input.name] = input.value;
+    });
+
+    // パーツの選択を監視
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.addEventListener('change', event => {
+            const category = input.name;
+            selectedParts[category] = input.value; // 選択した画像URLを保存
+            renderAvatar();
         });
+    });
 
-        // パーツの選択を監視
-        document.querySelectorAll('input[type="radio"]').forEach(input => {
-            input.addEventListener('change', event => {
-                const category = input.name;
-                selectedParts[category] = input.value; // 選択した画像URLを保存
-                renderAvatar();
-            });
+    // レイヤー順序
+    const layerOrder = ['base', 'eyes', 'clothes', 'accessory', 'hair'];
+
+    // Canvasにアバターを描画
+    function renderAvatar() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // 画面をクリア
+
+        layerOrder.forEach(category => {
+            const url = selectedParts[category];
+            if (url) {
+                const img = new Image();
+                img.src = url;
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // レイヤーを順番に描画
+                };
+            }
         });
-
-        // レイヤー順序
-        const layerOrder = ['base', 'eyes', 'clothes', 'accessory', 'hair'];
-
-        // Canvasにアバターを描画
-        function renderAvatar() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // 画面をクリア
-
-            layerOrder.forEach(category => {
-                const url = selectedParts[category];
-                if (url) {
-                    const img = new Image();
-                    img.src = url;
-                    img.onload = () => {
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // レイヤーを順番に描画
-                    };
-                }
-            });
-        }
+    }
 
     // 初期描画
     renderAvatar();
 
-        // 読み込みたい画像の順序とURLを指定
-    const layers = [
-        { src: '/path/to/base.png', name: 'base' }, // 素体
-        { src: '/path/to/eyes.png', name: 'eyes' }, // 目
-        { src: '/path/to/clothes.png', name: 'clothes' }, // 服
-        { src: '/path/to/accessory.png', name: 'accessory' }, // アクセサリー
-        { src: '/path/to/hair.png', name: 'hair' } // 髪
-    ];
+    // 保存リクエスト（Canvas画像を送信）
+    document.getElementById('save-avatar').addEventListener('click', () => {
+        const image = canvas.toDataURL('image/png'); // Canvasを画像データに変換
+        const selectedPartsList = [];
 
-// 画像を順番に読み込んで描画する関数
-    function loadImagesSequentially(layers) {
-    // 素体を最初に読み込む
-    const baseLayer = layers.find(layer => layer.name === 'base');
-    const otherLayers = layers.filter(layer => layer.name !== 'base');
+        // 選択されたラジオボタンを取得
+        document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+            selectedPartsList.push(input.id.replace('part_', '')); // IDからパーツIDを抽出
+        });
 
-    // 素体を読み込み
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = baseLayer.src; // 素体の画像URLを設定
-        img.onload = () => {
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // 素体をCanvasに描画
-            console.log(`${baseLayer.name} layer loaded`); // 素体のログ
-            resolve(); // 素体読み込みが完了
-        };
-        img.onerror = () => {
-            console.error(`Failed to load ${baseLayer.name} layer`);
-            reject(new Error('Base layer loading failed'));
-        };
-    }).then(() => {
-        // 素体の読み込み完了後に他のレイヤーを順次読み込む
-        return otherLayers.reduce((promise, layer) => {
-            return promise.then(() => {
-                return new Promise((resolve) => {
-                    const img = new Image();
-                    img.src = layer.src; // レイヤーの画像URLを設定
-                    img.onload = () => {
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // レイヤーをCanvasに描画
-                        console.log(`${layer.name} layer loaded`); // ログを出力
-                        resolve(); // 次の処理を進める
-                    };
-                    img.onerror = () => {
-                        console.error(`Failed to load ${layer.name} layer`);
-                        resolve(); // エラー時でも次の処理を進める
-                    };
-                });
-            });
-        }, Promise.resolve()); // 初期値は空のPromise
-    });
-}
+        if (selectedPartsList.length === 0) {
+            alert('選択されたパーツがありません。');
+            return;
+        }
 
-// 呼び出し例
-loadImagesSequentially(layers)
-    .then(() => {
-        console.log('All layers loaded');
-    })
-    .catch(err => {
-        console.error('Error loading layers:', err);
-    });
-
-
-    // 実行
-    loadImagesSequentially(layers);
-
-        // 保存リクエスト（Canvas画像を送信）
-        document.getElementById('save-avatar').addEventListener('click', () => {
-            const image = canvas.toDataURL('image/png'); // Canvasを画像データに変換
-
-            fetch('/api/save-avatar/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
-                body: JSON.stringify({ image })
+        fetch('/api/save-avatar/', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'X-CSRFToken': '{{ csrf_token }}' 
+            },
+            body: JSON.stringify({
+                image,
+                selected_parts: selectedPartsList, // パーツIDリストを送信
             })
-            .then(response => response.json())
-            .then(data => alert(data.message))
-            .catch(error => alert('保存中にエラーが発生しました。'));
-        });
+        })
+        .then(response => response.json())
+        .then(data => alert(data.message))
+        .catch(error => alert('保存中にエラーが発生しました。'));
+    });
 
-        // 「ホームに戻る」ボタンの動作
-        document.getElementById('go-home').addEventListener('click', () => {
-            window.location.href = '/home/'; // ホームに遷移
+    // 「ホームに戻る」ボタンの動作
+    document.getElementById('go-home').addEventListener('click', () => {
+        window.location.href = '/home/'; // ホームに遷移
+    });
+
+    // ロックされたパーツのクリックイベント
+    document.querySelectorAll('.locked-part').forEach(part => {
+        part.addEventListener('click', () => {
+            alert('このパーツは未解放です。必要ランクを満たすことで使用可能になります。');
         });
+    });
+});
+
     </script>
 </body>
 

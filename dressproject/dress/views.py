@@ -307,34 +307,54 @@ PARTS_CATEGORY_ORDER = {
     'hair': 5,
 }
 
-# アバター保存API
 @login_required
 @csrf_exempt
 def save_avatar(request):
     if request.method == "POST":
         try:
+            # ユーザーIDを取得
+            user_id = getattr(request.user, 'user_id', None)
+            if user_id is None:
+                return JsonResponse({"success": False, "message": "ユーザーIDが取得できません。"})
+
+            # リクエストデータを解析
             data = json.loads(request.body)
             image_data = data.get("image")
+            selected_parts = data.get("selected_parts")  # 選択されたパーツのIDリストを想定
 
             if not image_data:
                 return JsonResponse({"success": False, "message": "画像データがありません。"})
 
-            # 画像データをデコードして保存
+            if not selected_parts:
+                return JsonResponse({"success": False, "message": "選択されたパーツがありません。"})
+
+            # 選択されたパーツの検証
+            valid_parts = Parts.objects.filter(parts_id__in=selected_parts)
+            if valid_parts.count() != len(selected_parts):
+                return JsonResponse({"success": False, "message": "一部のパーツが無効です。"})
+
+            # アバター画像を保存
+            file_name = f"user_{user_id}.png"
             format, imgstr = image_data.split(';base64,')
-            ext = format.split('/')[-1]
-            file_name = f"user_{request.user.user_id}.png"
             file_data = ContentFile(base64.b64decode(imgstr), name=file_name)
 
-            # ユーザープロフィールに保存
-            user_profile = UserProfile.objects.get(user_id=request.user.user_id)
+            # プロフィール情報を取得（CustomUserに関連付けられたUserProfile）
+            user_profile = request.user.profile  # 変更: userprofile → profile に修正
+
+            # アバター画像を保存
             user_profile.avatar_image.save(file_name, file_data)
+
+            # 保存処理後、関連データを更新（例: 選択されたパーツを記録する）
+            user_profile.selected_parts.set(valid_parts)  # 適切なリレーションフィールドがある場合
             user_profile.save()
 
             return JsonResponse({"success": True, "message": "アバターが保存されました！"})
+
         except Exception as e:
             return JsonResponse({"success": False, "message": f"エラーが発生しました: {str(e)}"})
 
     return JsonResponse({"success": False, "message": "無効なリクエストです。"})
+
 
 # デフォルトアバターの生成
 @login_required
@@ -353,10 +373,8 @@ def render_default_avatar(user):
 # アバターカスタマイズ画面
 @login_required
 def customize_view(request):
-    """
-    パーツリストを`parts_category`と`parts_name`でソートして渡す。
-    """
     parts = Parts.objects.all().order_by('parts_category', 'parts_name')
+    user_rank = request.user.progress.current_rank  # 現在のユーザーランクを取得
     context = {
         "PARTS_CATEGORY": [
             ('hair', '髪'),
@@ -366,6 +384,7 @@ def customize_view(request):
             ('accessory', 'アクセサリー')
         ],
         "parts": parts,
+        "user_rank": user_rank,
     }
     return render(request, "dress/customize.html", context)
 

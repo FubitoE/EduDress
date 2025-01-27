@@ -231,3 +231,70 @@ body {
     margin-top: 20px;  /* 上部に余白を追加 */
     margin-bottom: 20px;
 }
+/* ロックされたパーツのスタイル */
+.locked-part {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: not-allowed; /* カーソルを禁止アイコンに変更 */
+    opacity: 0.6; /* ロックされたパーツを薄く表示 */
+}
+
+.locked-part img {
+    width: 80px;
+    height: 80px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    transition: 0.3s;
+    margin-top: 5px;
+    filter: grayscale(100%); /* グレースケールで非アクティブ感を追加 */
+}
+
+/* 鍵アイコンのオーバーレイ */
+.locked-part .lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 半透明の黒背景 */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    opacity: 0; /* 初期状態は非表示 */
+    transition: opacity 0.3s ease; /* ホバー時のフェードインをスムーズに */
+}
+
+.locked-part:hover .lock-overlay {
+    opacity: 1; /* ホバー時に鍵アイコンを表示 */
+}
+
+.locked-part .lock-icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.locked-part .unlock-message {
+    font-size: 12px;
+    text-align: center;
+    padding: 0 5px;
+    line-height: 1.2;
+}
+
+/* 選択不可の状態ではホバー効果を削除 */
+.part-item img.locked {
+    transform: none;
+    border-color: transparent;
+}
+
+/* 選択可能なパーツのホバー効果 */
+.part-item:not(.locked-part) img:hover {
+    transform: scale(1.1);
+    border-color: #98BCAC;
+}

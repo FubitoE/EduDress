@@ -41,7 +41,7 @@ class QuestionImgAdmin(admin.ModelAdmin):
 
 @admin.register(Parts)
 class PartsAdmin(admin.ModelAdmin):
-    list_display = ('parts_id', 'parts_name', 'parts_category', 'parts_default', 'parts_image', 'created_at', 'updated_at')
+    list_display = ('parts_id', 'parts_name', 'parts_category', 'parts_default', 'parts_image','unlock_rank', 'created_at', 'updated_at')
 
 
 @admin.register(Style)
